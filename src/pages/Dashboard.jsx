@@ -18,7 +18,7 @@ function Dashboard() {
 
         <DashboardLayout>
 
-            <h1>Dashboard</h1>
+            <div className="main-heading"> Dashboard</div>
 
             <div className="cards">
 
@@ -81,67 +81,6 @@ function Dashboard() {
             </div>
 
 
-            <div className="dashboard-bottom">
-
-    <div className="recent-students">
-
-        <h2>Recent Students</h2>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Name</th>
-
-                    <th>Class</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>Abdul Aziz</td>
-
-                    <td>BSCE-6A</td>
-
-                </tr>
-
-                <tr>
-
-                    <td>Ali Khan</td>
-
-                    <td>BSCE-6B</td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    <div className="recent-announcements">
-
-        <h2>Announcements</h2>
-
-        <ul>
-
-            <li>Mid Exams from 20 August</li>
-
-            <li>Fee submission before 10 August</li>
-
-            <li>Sports Week Next Month</li>
-
-        </ul>
-
-    </div>
-
-</div>
         </DashboardLayout>
 
     );

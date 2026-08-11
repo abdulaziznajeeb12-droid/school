@@ -1,0 +1,314 @@
+/* =========================================
+   CLASS FORM PAGE
+========================================= */
+
+.class-form-page {
+    width: 100%;
+    min-height: calc(100vh - 70px);
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 30px 20px;
+}
+
+
+/* =========================================
+   FORM CARD
+========================================= */
+
+.class-form-card {
+    width: 100%;
+    max-width: 650px;
+
+    padding: 30px;
+
+    border-radius: 16px !important;
+
+    background: #ffffff;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+
+/* =========================================
+   FORM TITLE
+========================================= */
+
+.class-form-title {
+    color: #0f3051;
+
+    font-size: 26px !important;
+
+    font-weight: 700 !important;
+
+    margin-bottom: 5px !important;
+}
+
+
+/* =========================================
+   FORM SUBTITLE
+========================================= */
+
+.class-form-subtitle {
+    color: #777;
+
+    font-size: 14px !important;
+
+    margin-bottom: 30px !important;
+}
+
+
+/* =========================================
+   FORM CONTENT
+========================================= */
+
+.class-form-content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 22px;
+
+}
+
+
+/* =========================================
+   TEXT FIELD
+========================================= */
+
+.class-form-content .MuiTextField-root {
+
+    width: 100%;
+
+}
+
+
+/* =========================================
+   TEXT FIELD INPUT
+========================================= */
+
+.class-form-content
+.MuiOutlinedInput-root {
+
+    border-radius: 8px;
+
+}
+
+
+/* =========================================
+   TEXT FIELD FOCUS
+========================================= */
+
+.class-form-content
+.MuiOutlinedInput-root.Mui-focused
+.MuiOutlinedInput-notchedOutline {
+
+    border-color: #1976d2;
+
+    border-width: 2px;
+
+}
+
+
+/* =========================================
+   SELECT
+========================================= */
+
+.class-form-content
+.MuiFormControl-root {
+
+    width: 100%;
+
+}
+
+
+/* =========================================
+   SELECT BOX
+========================================= */
+
+.class-form-content
+.MuiSelect-select {
+
+    padding: 14px;
+
+}
+
+
+/* =========================================
+   CHECKBOX
+========================================= */
+
+.class-form-content
+.MuiFormControlLabel-root {
+
+    margin-left: 0;
+
+    color: #333;
+
+    font-weight: 500;
+
+}
+
+
+/* =========================================
+   BUTTON CONTAINER
+========================================= */
+
+.class-form-buttons {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 10px;
+
+}
+
+
+/* =========================================
+   CANCEL BUTTON
+========================================= */
+
+.class-form-buttons
+.MuiButton-outlined {
+
+    min-width: 110px;
+
+    height: 42px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    text-transform: none;
+
+}
+
+
+/* =========================================
+   SAVE / UPDATE BUTTON
+========================================= */
+
+.class-form-buttons
+.MuiButton-contained {
+
+    min-width: 140px;
+
+    height: 42px;
+
+    border-radius: 8px;
+
+    background: #1976d2;
+
+    font-weight: 600;
+
+    text-transform: none;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================
+   BUTTON HOVER
+========================================= */
+
+.class-form-buttons
+.MuiButton-contained:hover {
+
+    background: #1565c0;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================
+   DISABLED BUTTON
+========================================= */
+
+.class-form-buttons
+.MuiButton-contained.Mui-disabled {
+
+    background: #90caf9;
+
+    color: white;
+
+}
+
+
+/* =========================================
+   RESPONSIVE - TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+    .class-form-page {
+
+        padding: 20px 15px;
+
+    }
+
+    .class-form-card {
+
+        padding: 25px;
+
+    }
+
+    .class-form-title {
+
+        font-size: 23px !important;
+
+    }
+
+}
+
+
+/* =========================================
+   RESPONSIVE - MOBILE
+========================================= */
+
+@media (max-width: 500px) {
+
+    .class-form-page {
+
+        padding: 15px 10px;
+
+    }
+
+    .class-form-card {
+
+        padding: 20px 15px;
+
+        border-radius: 12px !important;
+
+    }
+
+    .class-form-title {
+
+        font-size: 21px !important;
+
+    }
+
+    .class-form-buttons {
+
+        flex-direction: column-reverse;
+
+        width: 100%;
+
+    }
+
+    .class-form-buttons button {
+
+        width: 100%;
+
+    }
+
+}

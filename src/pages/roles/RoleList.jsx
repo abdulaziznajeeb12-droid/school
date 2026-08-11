@@ -13,59 +13,40 @@ import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 
-import { getClasses } from "../../services/classService";
-
 import {
-    getSections,
-    deleteSection,
-    searchSection
-} from "../../services/sectionService";
+    getRoles,
+    deleteRole,
+    searchRole
+} from "../../services/roleService";
 
-function SectionList() {
+function RoleList() {
 
-    const [sections, setSections] = useState([]);
-    const [classes, setClasses] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [search, setSearch] = useState("");
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
-        loadData();
+        loadRoles();
     }, []);
 
-    const loadData = async () => {
-
+    const loadRoles = async () => {
         try {
-
-            const sectionData = await getSections();
-            const classData = await getClasses();
-
-            setSections(sectionData);
-            setClasses(classData);
-
+            const data = await getRoles();
+            setRoles(data);
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     const handleSearch = async () => {
-
         try {
-
-            const data = await searchSection(search);
-
-            setSections(data);
-
+            const data = await searchRole(search);
+            setRoles(data);
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     useEffect(() => {
@@ -73,11 +54,8 @@ function SectionList() {
         const delay = setTimeout(() => {
 
             if (search.trim() === "") {
-
-                loadData();
-
+                loadRoles();
                 return;
-
             }
 
             handleSearch();
@@ -90,19 +68,17 @@ function SectionList() {
 
     const handleDelete = async (id) => {
 
-        if (!window.confirm("Delete this Section?"))
+        if (!window.confirm("Delete this Role?"))
             return;
 
         try {
 
-            await deleteSection(id);
-
-            loadData();
+            await deleteRole(id);
+            loadRoles();
 
         } catch (error) {
 
             console.log(error);
-
             alert("Delete Failed");
 
         }
@@ -110,17 +86,12 @@ function SectionList() {
     };
 
     const handleChangePage = (event, newPage) => {
-
         setPage(newPage);
-
     };
 
     const handleChangeRowsPerPage = (event) => {
-
         setRowsPerPage(parseInt(event.target.value, 10));
-
         setPage(0);
-
     };
 
     return (
@@ -130,9 +101,7 @@ function SectionList() {
             <div className="page-header">
 
                 <h2 className="main-heading">
-
-                    Section Management
-
+                    Role Management
                 </h2>
 
                 <div className="toolbar">
@@ -140,17 +109,15 @@ function SectionList() {
                     <input
                         className="searchbox"
                         type="text"
-                        placeholder="Search Section..."
+                        placeholder="Search Role..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
 
-                    <Link to="/sections/add">
+                    <Link to="/roles/add">
 
                         <button className="add-btn">
-
-                            + Add Section
-
+                            + Add Role
                         </button>
 
                     </Link>
@@ -172,22 +139,10 @@ function SectionList() {
                         <TableRow className="table-header">
 
                             <TableCell>ID</TableCell>
-
-                            <TableCell>Class Name</TableCell>
-
-                            <TableCell>Section</TableCell>
-
-                            <TableCell>Teacher ID</TableCell>
-
-                            <TableCell>Room No</TableCell>
-
-                            <TableCell>Capacity</TableCell>
-
-                            <TableCell align="center">
-
-                                Actions
-
-                            </TableCell>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Description</TableCell>
+                            <TableCell>Status</TableCell>
+                            <TableCell align="center">Actions</TableCell>
 
                         </TableRow>
 
@@ -196,78 +151,54 @@ function SectionList() {
                     <TableBody>
 
                         {(rowsPerPage > 0
-                            ? sections.slice(
+                            ? roles.slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
                             )
-                            : sections
-                        ).map((item) => (
+                            : roles
+                        ).map((role) => (
 
                             <TableRow
-                                key={item.sectionId}
+                                key={role.id}
                                 hover
                                 className="table-body-row"
                             >
 
-                                <TableCell>
+                                <TableCell>{role.id}</TableCell>
 
-                                    {item.sectionId}
+                                <TableCell>{role.name}</TableCell>
 
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {classes.find(
-                                        x => x.id === item.classId
-                                    )?.className || "N/A"}
-
-                                </TableCell>
+                                <TableCell>{role.decsribtion}</TableCell>
 
                                 <TableCell>
 
-                                    {item.sectionName}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.sectionTeacherId}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.roomNo}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.capacity}
+                                    <span
+                                        className={
+                                            role.isActive
+                                                ? "status-active"
+                                                : "status-inactive"
+                                        }
+                                    >
+                                        {role.isActive ? "Active" : "Inactive"}
+                                    </span>
 
                                 </TableCell>
 
                                 <TableCell align="center">
 
-                                    <Link
-                                        to={`/sections/edit/${item.sectionId}`}
-                                    >
+                                    <Link to={`/roles/edit/${role.id}`}>
 
                                         <button className="edit-btn">
-
                                             Edit
-
                                         </button>
 
                                     </Link>
 
                                     {/* <button
                                         className="delete-btn"
-                                        onClick={() => handleDelete(item.sectionId)}
+                                        onClick={() => handleDelete(role.id)}
                                     >
-
                                         Delete
-
                                     </button> */}
 
                                 </TableCell>
@@ -284,7 +215,7 @@ function SectionList() {
 
                             <TablePagination
                                 rowsPerPageOptions={[5, 10, 25]}
-                                count={sections.length}
+                                count={roles.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}
@@ -305,4 +236,4 @@ function SectionList() {
 
 }
 
-export default SectionList;
+export default RoleList;

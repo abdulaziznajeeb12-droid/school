@@ -13,59 +13,42 @@ import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 
-import { getClasses } from "../../services/classService";
-
 import {
-    getSections,
-    deleteSection,
-    searchSection
-} from "../../services/sectionService";
+    getUsers,
+    deleteUser,
+    searchUser
+} from "../../services/userService";
 
-function SectionList() {
+function UserList() {
 
-    const [sections, setSections] = useState([]);
-    const [classes, setClasses] = useState([]);
+    const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
-        loadData();
+        loadUsers();
     }, []);
 
-    const loadData = async () => {
-
+    const loadUsers = async () => {
         try {
-
-            const sectionData = await getSections();
-            const classData = await getClasses();
-
-            setSections(sectionData);
-            setClasses(classData);
-
-        } catch (error) {
-
-            console.log(error);
-
+            const data = await getUsers();
+            setUsers(data);
         }
-
+        catch (error) {
+            console.log(error);
+        }
     };
 
     const handleSearch = async () => {
-
         try {
-
-            const data = await searchSection(search);
-
-            setSections(data);
-
-        } catch (error) {
-
-            console.log(error);
-
+            const data = await searchUser(search);
+            setUsers(data);
         }
-
+        catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
@@ -73,11 +56,8 @@ function SectionList() {
         const delay = setTimeout(() => {
 
             if (search.trim() === "") {
-
-                loadData();
-
+                loadUsers();
                 return;
-
             }
 
             handleSearch();
@@ -90,19 +70,17 @@ function SectionList() {
 
     const handleDelete = async (id) => {
 
-        if (!window.confirm("Delete this Section?"))
+        if (!window.confirm("Delete this User?"))
             return;
 
         try {
 
-            await deleteSection(id);
-
-            loadData();
+            await deleteUser(id);
+            loadUsers();
 
         } catch (error) {
 
             console.log(error);
-
             alert("Delete Failed");
 
         }
@@ -110,29 +88,24 @@ function SectionList() {
     };
 
     const handleChangePage = (event, newPage) => {
-
         setPage(newPage);
-
     };
 
     const handleChangeRowsPerPage = (event) => {
-
         setRowsPerPage(parseInt(event.target.value, 10));
-
         setPage(0);
-
     };
 
     return (
 
         <DashboardLayout>
 
+            {/* Header */}
+
             <div className="page-header">
 
                 <h2 className="main-heading">
-
-                    Section Management
-
+                    User Management
                 </h2>
 
                 <div className="toolbar">
@@ -140,17 +113,15 @@ function SectionList() {
                     <input
                         className="searchbox"
                         type="text"
-                        placeholder="Search Section..."
+                        placeholder="Search User..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
 
-                    <Link to="/sections/add">
+                    <Link to="/users/add">
 
                         <button className="add-btn">
-
-                            + Add Section
-
+                            + Add User
                         </button>
 
                     </Link>
@@ -158,6 +129,8 @@ function SectionList() {
                 </div>
 
             </div>
+
+            {/* Table */}
 
             <TableContainer
                 component={Paper}
@@ -172,22 +145,12 @@ function SectionList() {
                         <TableRow className="table-header">
 
                             <TableCell>ID</TableCell>
-
-                            <TableCell>Class Name</TableCell>
-
-                            <TableCell>Section</TableCell>
-
-                            <TableCell>Teacher ID</TableCell>
-
-                            <TableCell>Room No</TableCell>
-
-                            <TableCell>Capacity</TableCell>
-
-                            <TableCell align="center">
-
-                                Actions
-
-                            </TableCell>
+                            <TableCell>First Name</TableCell>
+                            <TableCell>Last Name</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Role</TableCell>
+                            <TableCell>Branch</TableCell>
+                            <TableCell align="center">Actions</TableCell>
 
                         </TableRow>
 
@@ -196,78 +159,46 @@ function SectionList() {
                     <TableBody>
 
                         {(rowsPerPage > 0
-                            ? sections.slice(
+                            ? users.slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
                             )
-                            : sections
-                        ).map((item) => (
+                            : users
+                        ).map((user) => (
 
                             <TableRow
-                                key={item.sectionId}
+                                key={user.id}
                                 hover
                                 className="table-body-row"
                             >
 
-                                <TableCell>
+                                <TableCell>{user.id}</TableCell>
 
-                                    {item.sectionId}
+                                <TableCell>{user.firstName}</TableCell>
 
-                                </TableCell>
+                                <TableCell>{user.lastName}</TableCell>
 
-                                <TableCell>
+                                <TableCell>{user.email}</TableCell>
 
-                                    {classes.find(
-                                        x => x.id === item.classId
-                                    )?.className || "N/A"}
+                                <TableCell>{user.roleName}</TableCell>
 
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.sectionName}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.sectionTeacherId}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.roomNo}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.capacity}
-
-                                </TableCell>
+                                <TableCell>{user.branchName}</TableCell>
 
                                 <TableCell align="center">
 
-                                    <Link
-                                        to={`/sections/edit/${item.sectionId}`}
-                                    >
+                                    <Link to={`/users/edit/${user.id}`}>
 
                                         <button className="edit-btn">
-
                                             Edit
-
                                         </button>
 
                                     </Link>
 
                                     {/* <button
                                         className="delete-btn"
-                                        onClick={() => handleDelete(item.sectionId)}
+                                        onClick={() => handleDelete(user.id)}
                                     >
-
                                         Delete
-
                                     </button> */}
 
                                 </TableCell>
@@ -284,7 +215,7 @@ function SectionList() {
 
                             <TablePagination
                                 rowsPerPageOptions={[5, 10, 25]}
-                                count={sections.length}
+                                count={users.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}
@@ -305,4 +236,4 @@ function SectionList() {
 
 }
 
-export default SectionList;
+export default UserList;

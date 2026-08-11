@@ -1,0 +1,193 @@
+/* ================= NAVBAR ================= */
+
+.navbar{
+
+height:70px;
+
+background:#0f3051 !important;
+
+color:#222 !important;
+
+left:260px !important;
+
+width:calc(100% - 260px) !important;
+
+box-shadow:0 4px 15px rgba(0,0,0,.08) !important;
+
+transition:.35s !important;
+
+z-index:1200;
+
+}
+
+/* Sidebar Collapse */
+
+.navbar-collapse{
+
+left:80px !important;
+
+width:calc(100% - 80px) !important;
+
+}
+
+/* Toolbar */
+
+.navbar-toolbar{
+
+height:70px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:0 25px !important;
+
+}
+
+/* Left */
+
+.navbar-left{
+
+flex:1;
+
+display:flex;
+
+align-items:center;
+
+}
+
+.navbar-title{
+
+font-size:24px !important;
+
+font-weight:700 !important;
+
+color:#f7f8fa;
+
+}
+
+/* Center */
+
+.navbar-center{
+
+flex:1;
+
+display:flex;
+
+justify-content:center;
+
+}
+
+.navbar-search{
+
+width:220px;
+
+}
+
+.navbar-search .MuiOutlinedInput-root{
+
+border-radius:30px;
+
+background:#102a5f;
+
+}
+
+/* Right */
+
+.navbar-right{
+
+flex:1;
+
+display:flex;
+
+justify-content:flex-end;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+/* Icons */
+
+.navbar-right .MuiIconButton-root{
+
+color:white !important;
+
+}
+
+/* Avatar */
+
+.navbar-avatar{
+
+background:#1976d2 !important;
+
+font-weight:bold;
+
+width:42px !important;
+
+height:42px !important;
+
+}
+
+/* Search Focus */
+
+.navbar-search input{
+
+padding:11px;
+
+}
+
+/* Responsive */
+
+@media(max-width:900px){
+
+.navbar{
+
+left:80px !important;
+
+width:calc(100% - 80px) !important;
+
+}
+
+.navbar-search{
+
+width:220px;
+
+}
+
+}
+
+@media(max-width:700px){
+
+.navbar-center{
+
+display:none;
+
+}
+
+.navbar-title{
+
+font-size:18px !important;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.navbar-title{
+
+font-size:10px !important;
+
+}
+
+.navbar-right{
+
+gap:5px;
+
+}
+
+}

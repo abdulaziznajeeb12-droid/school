@@ -1,17 +1,46 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
-
+import "../../assets/table.css";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 import {
     getSchools,
-    getSchoolById,
-    deleteSchool
+    deleteSchool,
+    searchSchool
 } from "../../services/schoolService";
+import { backgroundColor } from "@mui/system";
 
 function SchoolList() {
 
     const [schools, setSchools] = useState([]);
-    const [searchId, setSearchId] = useState("");
+    const [search, setSearch] = useState("");
+    const [page, setPage] = useState(0);
+const [rowsPerPage, setRowsPerPage] = useState(5);
+
+const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+};
+
+const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+};
+
+const emptyRows =
+    rowsPerPage > 0
+        ? Math.max(
+              0,
+              (1 + page) * rowsPerPage - schools.length
+          )
+        : 0;
 
     useEffect(() => {
         loadSchools();
@@ -19,58 +48,62 @@ function SchoolList() {
 
     const loadSchools = async () => {
         try {
+
             const data = await getSchools();
             setSchools(data);
-        }
-        catch (error) {
+
+        } catch (error) {
             console.log(error);
         }
     };
 
-    const searchSchool = async () => {
-
-        if (searchId === "") {
-            loadSchools();
-            return;
-        }
+    const handleSearch = async () => {
 
         try {
 
-            const school = await getSchoolById(searchId);
+            const data = await searchSchool(search);
+            setSchools(data);
 
-            if (school == null) {
-                alert("School Not Found");
-                return;
-            }
-
-            setSchools([school]);
-
-        }
-        catch (error) {
+        } catch (error) {
 
             console.log(error);
 
-            alert("School Not Found");
         }
+
     };
+
+    useEffect(() => {
+
+        const delay = setTimeout(() => {
+
+            if (search.trim() === "") {
+                loadSchools();
+                return;
+            }
+
+            handleSearch();
+
+        }, 300);
+
+        return () => clearTimeout(delay);
+
+    }, [search]);
 
     const handleDelete = async (id) => {
 
-        if (!window.confirm("Are you sure you want to delete this school?"))
+        if (!window.confirm("Delete this School?"))
             return;
 
         try {
 
             await deleteSchool(id);
-
             loadSchools();
 
-        }
-        catch (error) {
+        } catch (error) {
 
             console.log(error);
-
             alert("Delete Failed");
+
         }
 
     };
@@ -79,92 +112,138 @@ function SchoolList() {
 
         <DashboardLayout>
 
-            <h2>Schools</h2>
+           
 
-            <div style={{ marginBottom: "20px" }}>
+            <div className="page-header">
 
-                <input  style={{  width:"200px",height:"30px"}}
-                    type="number"
-                    placeholder="Search By ID"
-                    value={searchId}
-                    onChange={(e) => setSearchId(e.target.value)}
-                />
+    <h2 className="main-heading">
 
-                <button  style={{marginLeft:"1px", backgroundColor: "green", color: "white" ,width:"100px",height:"30px"}} onClick={searchSchool}>
-                    Search
-                </button>
+        School Management
 
-                <button  style={{ marginLeft: "5px", backgroundColor: "green", color: "white" ,width:"100px",height:"30px"}} onClick={loadSchools}>
-                    Show All
-                </button>
+    </h2>
 
-                <Link to="/schools/add">
+    <div className="toolbar">
 
-                    <button style={{ marginLeft: "5px", backgroundColor: "green", color: "white" ,width:"100px",height:"30px"}}>
-                        Add School
-                    </button>
+        <input
+            className="searchbox"
+            type="text"
+            placeholder="Search School..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+        />
 
-                </Link>
+        <Link to="/schools/add">
 
-            </div>
+            <button className="add-btn">
 
-            <table border="1" cellPadding="10">
+                + Add School
 
-                <thead>
+            </button>
 
-                    <tr>
+        </Link>
 
-                        <th>ID</th>
+    </div>
 
-                        <th>School Name</th>
+</div>
+<TableContainer
+    component={Paper}
+    className="school-table-container"
+    elevation={5}
+>
+<Table className="school-table">
+        <TableHead>
 
-                        <th>Active</th>
+    <TableRow className="table-header">
 
-                        <th>Action</th>
+        <TableCell>ID</TableCell>
+        <TableCell>School Name</TableCell>
+        <TableCell>Status</TableCell>
+        <TableCell align="center">Actions</TableCell>
 
-                    </tr>
+    </TableRow>
 
-                </thead>
+</TableHead>
+<TableBody>
 
-                <tbody>
+{(rowsPerPage > 0
+    ? schools.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      )
+    : schools
+).map((school) => (
 
-                    {schools.map((school) => (
+<TableRow
+    key={school.id}
+    hover
+    className="table-body-row"
+>
 
-                        <tr key={school.id}>
+    <TableCell>{school.id}</TableCell>
 
-                            <td>{school.id}</td>
+    <TableCell>{school.schoolName}</TableCell>
 
-                            <td>{school.schoolName}</td>
+    <TableCell>
 
-                            <td>{school.isActive ? "Yes" : "No"}</td>
+        <span
+            className={
+                school.isActive
+                    ? "status-active"
+                    : "status-inactive"
+            }
+        >
+            {school.isActive ? "Active" : "Inactive"}
+        </span>
 
-                            <td>
+    </TableCell>
 
-                                <Link to={`/schools/edit/${school.id}`}>
+    <TableCell align="center">
 
-                                    <button>Edit</button>
+        <Link to={`/schools/edit/${school.id}`}>
 
-                                </Link>
+            <button className="edit-btn">
+                Edit
+            </button>
 
-                                &nbsp;
+        </Link>
 
-                                <button
-                                    onClick={() => handleDelete(school.id)}
-                                >
-                                    Delete
-                                </button>
+        {/* <button
+            className="delete-btn"
+            onClick={() => handleDelete(school.id)}
+        >
+            Delete
+        </button> */}
 
-                            </td>
+    </TableCell>
 
-                        </tr>
+</TableRow>
 
-                    ))}
+))}
 
-                </tbody>
+</TableBody>
+        <TableFooter>
 
-            </table>
+<TableRow>
+
+<TablePagination
+rowsPerPageOptions={[5,10,25]}
+count={schools.length}
+rowsPerPage={rowsPerPage}
+page={page}
+onPageChange={handleChangePage}
+onRowsPerPageChange={handleChangeRowsPerPage}
+/>
+
+</TableRow>
+
+</TableFooter>
+
+    </Table>
+
+</TableContainer>
 
         </DashboardLayout>
+
     );
 }
 

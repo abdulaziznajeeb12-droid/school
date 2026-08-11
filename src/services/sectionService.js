@@ -14,6 +14,10 @@ export const getSectionById = async (id) => {
     return response.data;
 };
 
+export const searchSection = async (search) => {
+    const response = await api.get(`/Section/SearchSection?search=${search}`);
+    return response.data;
+};
 // Add
 export const addSection = async (section) => {
     const response = await api.post("/Section/AddSection", section);

@@ -1,0 +1,226 @@
+/* =================
+========
+   FORM PAGE
+========================= */
+
+.form-page {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+
+/* =========================
+   FORM CARD
+========================= */
+
+.form-card {
+    width: 100%;
+    max-width: 650px;
+    padding: 30px;
+    border-radius: 12px !important;
+    background: #ffffff;
+}
+
+
+/* =========================
+   FORM TITLE
+========================= */
+
+.form-title {
+    margin: 0 0 30px 0;
+    color: #0f3051;
+    font-size: 28px;
+    font-weight: 700;
+    border-bottom: 2px solid #1976d2;
+    padding-bottom: 12px;
+}
+
+
+/* =========================
+   FORM FIELD
+========================= */
+
+.form-field {
+    margin-bottom: 22px !important;
+}
+
+
+/* =========================
+   CHECKBOX
+========================= */
+
+.form-checkbox {
+    margin-top: 5px !important;
+    margin-bottom: 20px !important;
+}
+
+
+/* =========================
+   BUTTON AREA
+========================= */
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+
+/* =========================
+   SAVE BUTTON
+========================= */
+
+.save-btn {
+    background: #1976d2 !important;
+    color: white !important;
+    min-width: 130px;
+    height: 42px;
+    font-weight: 600 !important;
+    text-transform: none !important;
+}
+
+.save-btn:hover {
+    background: #1565c0 !important;
+}
+
+
+/* =========================
+   CANCEL BUTTON
+========================= */
+
+.cancel-btn {
+    min-width: 100px;
+    height: 42px;
+    font-weight: 600 !important;
+    text-transform: none !important;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .form-page {
+        padding: 15px;
+    }
+
+    .form-card {
+        padding: 20px;
+    }
+
+    .form-title {
+        font-size: 24px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .form-card {
+        padding: 15px;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .save-btn,
+    .cancel-btn {
+        width: 100%;
+    }
+
+}
+
+
+
+
+
+/* =================================
+   USER FORM
+================================= */
+.user-form-card {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 35px;
+    border-radius: 15px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+.user-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.full-width-field {
+    grid-column: 1 / -1;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.form-buttons button {
+    min-width: 150px;
+    height: 45px;
+}
+
+.save-btn {
+    background: #0f3051 !important;
+}
+
+.save-btn:hover {
+    background: #1976d2 !important;
+}
+
+.snackbar-alert {
+    width: 100%;
+    font-weight: 600;
+}
+
+
+/* Tablet */
+
+@media (max-width: 1000px) {
+
+    .user-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* Mobile */
+
+@media (max-width: 650px) {
+
+    .user-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width-field {
+        grid-column: auto;
+    }
+
+    .user-form-card {
+        padding: 20px;
+    }
+
+    .form-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .form-buttons button {
+        width: 100%;
+    }
+
+}

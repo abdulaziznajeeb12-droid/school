@@ -1,25 +1,39 @@
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import "../assets/dashboard.css";
 
 function DashboardLayout({ children }) {
-  return (
-    <div className="dashboard-container">
 
-      <Sidebar />
+    const [open, setOpen] = useState(true);
 
-      <div className="main-content">
+    return (
 
-        <Navbar />
+        <div className="dashboard-container">
 
-        <div className="page-content">
-          {children}
+            <Sidebar
+                open={open}
+                setOpen={setOpen}
+            />
+
+            <div className={`main-content ${open ? "" : "expand"}`}>
+
+                <Navbar
+                    open={open}
+                />
+
+                <div className="page-content">
+
+                    {children}
+
+                </div>
+
+            </div>
+
         </div>
 
-      </div>
+    );
 
-    </div>
-  );
 }
 
 export default DashboardLayout;

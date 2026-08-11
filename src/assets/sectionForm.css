@@ -1,0 +1,294 @@
+/* =========================================
+   SECTION FORM PAGE
+========================================= */
+
+.section-form-page {
+
+    width: 100%;
+
+    min-height: calc(100vh - 70px);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    padding: 30px 20px;
+
+}
+
+
+/* =========================================
+   FORM CARD
+========================================= */
+
+.section-form-card {
+
+    width: 100%;
+
+    max-width: 650px;
+
+    padding: 30px;
+
+    border-radius: 16px !important;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.08) !important;
+
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.section-form-title {
+
+    color: #0f3051;
+
+    font-size: 26px !important;
+
+    font-weight: 700 !important;
+
+    margin-bottom: 5px !important;
+
+}
+
+
+/* =========================================
+   SUBTITLE
+========================================= */
+
+.section-form-subtitle {
+
+    color: #777;
+
+    font-size: 14px !important;
+
+    margin-bottom: 30px !important;
+
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.section-form-content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 22px;
+
+}
+
+
+/* =========================================
+   TEXT FIELD
+========================================= */
+
+.section-form-content
+.MuiTextField-root {
+
+    width: 100%;
+
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.section-form-content
+.MuiOutlinedInput-root {
+
+    border-radius: 8px;
+
+}
+
+
+/* =========================================
+   INPUT FOCUS
+========================================= */
+
+.section-form-content
+.MuiOutlinedInput-root.Mui-focused
+.MuiOutlinedInput-notchedOutline {
+
+    border-color: #1976d2;
+
+    border-width: 2px;
+
+}
+
+
+/* =========================================
+   SELECT
+========================================= */
+
+.section-form-content
+.MuiFormControl-root {
+
+    width: 100%;
+
+}
+
+
+.section-form-content
+.MuiSelect-select {
+
+    padding: 14px;
+
+}
+
+
+/* =========================================
+   BUTTON AREA
+========================================= */
+
+.section-form-buttons {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 10px;
+
+}
+
+
+/* =========================================
+   CANCEL BUTTON
+========================================= */
+
+.section-form-buttons
+.MuiButton-outlined {
+
+    min-width: 110px;
+
+    height: 42px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    text-transform: none;
+
+}
+
+
+/* =========================================
+   SAVE / UPDATE
+========================================= */
+
+.section-form-buttons
+.MuiButton-contained {
+
+    min-width: 140px;
+
+    height: 42px;
+
+    border-radius: 8px;
+
+    background: #1976d2;
+
+    font-weight: 600;
+
+    text-transform: none;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.section-form-buttons
+.MuiButton-contained:hover {
+
+    background: #1565c0;
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .section-form-page {
+
+        padding: 20px 15px;
+
+    }
+
+    .section-form-card {
+
+        padding: 25px;
+
+    }
+
+    .section-form-title {
+
+        font-size: 23px !important;
+
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 500px) {
+
+    .section-form-page {
+
+        padding: 15px 10px;
+
+    }
+
+    .section-form-card {
+
+        padding: 20px 15px;
+
+        border-radius: 12px !important;
+
+    }
+
+    .section-form-title {
+
+        font-size: 21px !important;
+
+    }
+
+    .section-form-buttons {
+
+        flex-direction: column-reverse;
+
+        width: 100%;
+
+    }
+
+    .section-form-buttons button {
+
+        width: 100%;
+
+    }
+
+}

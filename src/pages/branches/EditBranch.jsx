@@ -1,8 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
-import {    getBranchById,updateBranch} from "../../services/branchService";
+
+import {
+    getBranchById,
+    updateBranch
+} from "../../services/branchService";
+
 import { getSchools } from "../../services/schoolService";
+
+import {
+    Alert,
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    Checkbox,
+    FormControlLabel,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Box,
+    Snackbar
+} from "@mui/material";
 
 function EditBranch() {
 
@@ -11,135 +32,339 @@ function EditBranch() {
     const navigate = useNavigate();
 
     const [branchName, setBranchName] = useState("");
-    const [schoolName, setSchoolName] = useState("");
+    const [schoolId, setSchoolId] = useState("");
     const [isActive, setIsActive] = useState(true);
 
-
     const [schools, setSchools] = useState([]);
-    const [schoolId, setSchoolId] = useState("");
 
-useEffect(() => {
-    loadSchools();
-}, []);
+    // Snackbar states
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-const loadSchools = async () => {
-    try {
-        const data = await getSchools();
-        setSchools(data);
-    } catch (error) {
-        console.log(error);
-    }
-};
+
+    // =========================
+    // LOAD DATA
+    // =========================
 
     useEffect(() => {
 
+        loadSchools();
         loadBranch();
 
     }, []);
 
-    const loadBranch = async () => {
 
-        const data = await getBranchById(id);
+    const loadSchools = async () => {
 
-        setBranchName(data.branchName);
-        setSchoolName(data.schoolName);
-        setIsActive(data.isActive);
-        setSchoolId(data.schoolId)
+        try {
 
+            const data = await getSchools();
+
+            setSchools(data);
+
+        }
+        catch (error) {
+
+            console.log(error);
+
+            setSnackbarMessage("Unable to load schools");
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
+
+        }
 
     };
+
+
+    const loadBranch = async () => {
+
+        try {
+
+            const data = await getBranchById(id);
+
+            setBranchName(data.branchName || "");
+
+            setSchoolId(data.schoolId || "");
+
+            setIsActive(data.isActive ?? true);
+
+        }
+        catch (error) {
+
+            console.log(error);
+
+            setSnackbarMessage("Unable to load branch");
+            setSnackbarSeverity("error");
+            setOpenSnackbar(true);
+
+        }
+
+    };
+
+
+    // =========================
+    // SNACKBAR CLOSE
+    // =========================
+
+    const handleClose = (event, reason) => {
+
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setOpenSnackbar(false);
+
+    };
+
+
+    // =========================
+    // UPDATE BRANCH
+    // =========================
 
     const updateData = async (e) => {
 
         e.preventDefault();
 
-        await updateBranch({
+        try {
 
-            id: Number(id),
+            await updateBranch({
 
-            branchName,
+                id: Number(id),
 
-            schoolName,
+                branchName: branchName.trim(),
 
-            isActive
+                schoolId: Number(schoolId),
 
-        });
+                isActive
 
-        alert("Branch Updated Successfully");
+            });
 
-        navigate("/branches");
+
+            // Show success Snackbar
+
+            setSnackbarMessage("Branch Updated Successfully");
+
+            setSnackbarSeverity("success");
+
+            setOpenSnackbar(true);
+
+
+            // Navigate after Snackbar starts showing
+
+            setTimeout(() => {
+
+                navigate("/branches");
+
+            }, 1000);
+
+
+        }
+        catch (error) {
+
+            console.log(error);
+
+            setSnackbarMessage("Unable to Update Branch");
+
+            setSnackbarSeverity("error");
+
+            setOpenSnackbar(true);
+
+        }
 
     };
+
 
     return (
 
         <DashboardLayout>
 
-            <h2>Edit Branch</h2>
+            <Paper className="form-card">
 
-            <form onSubmit={updateData}>
+                <Typography
+                    variant="h4"
+                    className="form-title"
+                >
+                    Edit Branch
+                </Typography>
 
-                <div>
 
-                    <label>Branch Name</label>
+                <Box
+                    component="form"
+                    className="form-container"
+                    onSubmit={updateData}
+                >
 
-                    <br />
 
-                    <input
-                        type="text"
+                    {/* =========================
+                        BRANCH NAME
+                    ========================= */}
+
+                    <TextField
+
+                        fullWidth
+
+                        label="Branch Name"
+
                         value={branchName}
-                        onChange={(e) => setBranchName(e.target.value)}
-                    />
-                </div>
 
-                <br />
+                        onChange={(e) =>
+                            setBranchName(e.target.value)
+                        }
 
-                <div>
-                    <label>School Name</label>
-                    <br />
-                    {/* <input type="text" value={schoolName} onChange={(e) => setSchoolName(e.target.value)}  /> */}
-       <select
-                        value={schoolId}
-                        onChange={(e) => setSchoolId(e.target.value)}
                         required
-    >
-        <option value="">Select School</option>
 
-        {schools.map((school) => (
-            <option key={school.id} value={school.id}>
-                {school.schoolName}
-            </option>
-        ))}
-
-    </select>
-
-
-                </div>
-
-                <br />
-
-                <label>
-
-                    <input
-                        type="checkbox"
-                        checked={isActive}
-                        onChange={(e) => setIsActive(e.target.checked)}
                     />
 
-                    Active
 
-                </label>
+                    {/* =========================
+                        SCHOOL
+                    ========================= */}
 
-                <br /><br />
+                    <FormControl
+                        fullWidth
+                        required
+                    >
 
-                <button type="submit">
-                    Update Branch
-                </button>
+                        <InputLabel>
+                            School
+                        </InputLabel>
 
-            </form>
+
+                        <Select
+
+                            value={schoolId}
+
+                            label="School"
+
+                            onChange={(e) =>
+                                setSchoolId(e.target.value)
+                            }
+
+                        >
+
+                            <MenuItem value="">
+                                Select School
+                            </MenuItem>
+
+
+                            {
+
+                                schools.map((school) => (
+
+                                    <MenuItem
+                                        key={school.id}
+                                        value={school.id}
+                                    >
+
+                                        {school.schoolName}
+
+                                    </MenuItem>
+
+                                ))
+
+                            }
+
+                        </Select>
+
+                    </FormControl>
+
+
+                    {/* =========================
+                        ACTIVE
+                    ========================= */}
+
+                    <FormControlLabel
+
+                        control={
+
+                            <Checkbox
+
+                                checked={isActive}
+
+                                onChange={(e) =>
+                                    setIsActive(
+                                        e.target.checked
+                                    )
+                                }
+
+                            />
+
+                        }
+
+                        label="Active"
+
+                    />
+
+
+                    {/* =========================
+                        UPDATE BUTTON
+                    ========================= */}
+
+                    <Button
+
+                        variant="contained"
+
+                        type="submit"
+
+                        size="large"
+
+                    >
+
+                        Update Branch
+
+                    </Button>
+
+
+                </Box>
+
+            </Paper>
+
+
+            {/* =========================
+                SNACKBAR
+            ========================= */}
+
+            <Snackbar
+
+                open={openSnackbar}
+
+                autoHideDuration={3000}
+
+                onClose={handleClose}
+
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right"
+                }}
+
+            >
+
+                <Alert
+
+                    onClose={handleClose}
+
+                    severity={snackbarSeverity}
+
+                    variant="filled"
+
+                    sx={{
+                        width: "100%"
+                    }}
+
+                >
+
+                    {snackbarMessage}
+
+                </Alert>
+
+            </Snackbar>
+
 
         </DashboardLayout>
+
     );
+
 }
 
 export default EditBranch;

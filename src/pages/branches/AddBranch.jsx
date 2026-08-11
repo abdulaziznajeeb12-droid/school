@@ -1,32 +1,68 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
+
 import { addBranch } from "../../services/branchService";
 import { getSchools } from "../../services/schoolService";
+
+import {
+    Paper,
+    Typography,
+    TextField,
+    Button,
+    Checkbox,
+    FormControlLabel,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Box,
+    Snackbar,
+    Alert
+} from "@mui/material";
 
 function AddBranch() {
 
     const navigate = useNavigate();
 
     const [branchName, setBranchName] = useState("");
-    const [schoolName, setSchoolName] = useState("");
+    const [schoolId, setSchoolId] = useState("");
     const [isActive, setIsActive] = useState(true);
 
     const [schools, setSchools] = useState([]);
-    const [schoolId, setSchoolId] = useState("");
 
-useEffect(() => {
-    loadSchools();
-}, []);
+    // Snackbar
+    const [open, setOpen] = useState(false);
 
-const loadSchools = async () => {
-    try {
-        const data = await getSchools();
-        setSchools(data);
-    } catch (error) {
-        console.log(error);
-    }
-};
+    useEffect(() => {
+        loadSchools();
+    }, []);
+
+    const loadSchools = async () => {
+
+        try {
+
+            const data = await getSchools();
+
+            setSchools(data);
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    };
+
+    const handleClose = (event, reason) => {
+
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setOpen(false);
+
+    };
 
     const saveBranch = async (e) => {
 
@@ -35,117 +71,164 @@ const loadSchools = async () => {
         try {
 
             await addBranch({
+
                 branchName,
-                schoolName,
-                schoolId,
+                schoolId: Number(schoolId),
                 isActive
+
             });
 
-            alert("Branch Added Successfully");
+            // Snackbar open
+            setOpen(true);
 
-            navigate("/branches");
+            // 1.5 second baad branches page par jao
+            setTimeout(() => {
+
+                navigate("/branches");
+
+            }, 1500);
 
         } catch (error) {
 
             console.log(error);
 
-            alert("Unable to Add Branch");
         }
+
     };
 
     return (
 
         <DashboardLayout>
 
-            <h2>Add Branch</h2>
+            <Paper
+                className="form-card"
+                elevation={4}
+            >
 
-            <form onSubmit={saveBranch}>
+                <Typography
+                    variant="h4"
+                    className="form-title"
+                >
+                    Add Branch
+                </Typography>
 
-                <div>
 
-                    <label>Branch Name</label>
+                <Box
+                    component="form"
+                    onSubmit={saveBranch}
+                    className="form-container"
+                >
 
-                    <br />
+                    {/* Branch Name */}
 
-                    <input
-                        type="text"
+                    <TextField
+                        fullWidth
+                        label="Branch Name"
+                        variant="outlined"
                         value={branchName}
-                        onChange={(e) => setBranchName(e.target.value)}
+                        onChange={(e) =>
+                            setBranchName(e.target.value)
+                        }
                         required
                     />
 
-                </div>
 
-                <br />
+                    {/* School */}
 
-                <div>
+                    <FormControl fullWidth required>
 
-                    <label>School Name</label>
+                        <InputLabel>School</InputLabel>
 
-                    <br />
+                        <Select
+                            value={schoolId}
+                            label="School"
+                            onChange={(e) =>
+                                setSchoolId(e.target.value)
+                            }
+                        >
 
-                    {/* <input
-                        type="text"
-                        value={schoolName}
-                        onChange={(e) => setSchoolName(e.target.value)}
-                        required
-                    /> */}
+                            <MenuItem value="">
+                                <em>Select School</em>
+                            </MenuItem>
 
-                     <select
-                        value={schoolId}
-                        onChange={(e) => setSchoolId(e.target.value)}
-                        required
-    >
-        <option value="">Select School</option>
+                            {schools.map((school) => (
 
-        {schools.map((school) => (
-            <option key={school.id} value={school.id}>
-                {school.schoolName}
-            </option>
-        ))}
+                                <MenuItem
+                                    key={school.id}
+                                    value={school.id}
+                                >
+                                    {school.schoolName}
+                                </MenuItem>
 
-    </select>
+                            ))}
 
-    {/* <select
-                        value={schoolId}
-                        onChange={(e) => setSchoolId(e.target.value)}
-                        required
-    >
-        {/* <option value="">Select School</option>
+                        </Select>
 
-            <option key="Male" value="Male">
-                Male
-            </option> */}
-        
+                    </FormControl>
 
-    {/* </select>  */}
 
-                </div>
+                    {/* Active */}
 
-                <br />
+                    <FormControlLabel
 
-                <label>
+                        control={
 
-                    <input
-                        type="checkbox"
-                        checked={isActive}
-                        onChange={(e) => setIsActive(e.target.checked)}
+                            <Checkbox
+                                checked={isActive}
+                                onChange={(e) =>
+                                    setIsActive(e.target.checked)
+                                }
+                            />
+
+                        }
+
+                        label="Active"
+
                     />
 
-                    Active
 
-                </label>
+                    {/* Save Button */}
 
-                <br /><br />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                    >
+                        Save Branch
+                    </Button>
 
-                <button type="submit">
-                    Save Branch
-                </button>
+                </Box>
 
-            </form>
+            </Paper>
+
+
+            {/* Snackbar */}
+
+            <Snackbar
+                open={open}
+                autoHideDuration={5000}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right"
+                }}
+            >
+
+                <Alert
+                    onClose={handleClose}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: "100%" }}
+                >
+                    Branch Added Successfully!
+                </Alert>
+
+            </Snackbar>
 
         </DashboardLayout>
+
     );
+
 }
 
 export default AddBranch;

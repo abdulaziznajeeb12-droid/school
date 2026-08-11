@@ -1,0 +1,189 @@
+.sidebar{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:260px;
+
+height:100vh;
+
+background:#0f3051;
+
+transition:.35s;
+
+overflow:hidden;
+
+z-index:1300;
+
+box-shadow:3px 0 15px rgba(0,0,0,.15);
+
+}
+
+.sidebar.close{
+
+width:80px;
+
+}
+
+/* Logo */
+
+.logo{
+
+height:70px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+color:white;
+
+font-size:16px;
+
+font-weight:bold;
+
+border-bottom:1px solid rgba(255,255,255,.1);
+
+}
+
+/* Toggle */
+
+.toggle{
+
+position:absolute;
+
+right:-11px;
+
+top:18px;
+
+width:36px;
+
+height:36px;
+
+border:none;
+
+border-radius:50%;
+
+background:#1976d2;
+
+color:white;
+
+cursor:pointer;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+box-shadow:0 5px 15px rgba(0,0,0,.3);
+
+}
+
+/* Menu */
+
+.sidebar ul{
+
+padding:0px 6px;
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+margin-bottom:5px;
+
+border-radius:10px;
+
+overflow:hidden;
+
+}
+
+.sidebar li a{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+padding:5px;
+
+text-decoration:none;
+
+color:white;
+
+font-size:17px;
+
+transition:.5s;
+
+}
+
+/* Hover */
+
+.sidebar li:hover{
+
+background:#032445;
+
+}
+
+/* Active */
+
+.sidebar li.active{
+
+background:#082944;
+
+}
+
+/* Icon */
+
+.sidebar svg{
+
+font-size:24px;
+
+}
+
+/* Collapse */
+
+.sidebar.close span{
+
+display:none;
+
+}
+
+.sidebar.close h2{
+
+display:none;
+
+}
+
+.sidebar.close li a{
+
+justify-content:center;
+
+padding:18px;
+
+}
+
+/* Scroll */
+
+.sidebar::-webkit-scrollbar{
+
+width:5px;
+
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+
+background:#1976d2;
+
+border-radius:20px;
+
+}

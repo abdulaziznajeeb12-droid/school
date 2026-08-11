@@ -14,6 +14,10 @@ export const getBranchById = async (id) => {
     return response.data;
 };
 
+export const searchBranch = async (search) => {
+    const response = await api.get(`/Branche/SearchBranch?search=${search}`);
+    return response.data;
+};
 // Add
 export const addBranch = async (branch) => {
     const response = await api.post("/Branche/AddBranches", branch);

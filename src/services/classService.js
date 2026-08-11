@@ -25,6 +25,10 @@ export const updateClass = async (data) => {
     const response = await api.post("/Class/UpdateClass", data);
     return response.data;
 };
+export const searchClass = async (search) => {
+    const response = await api.get(`/Class/SearchClass?search=${search}`);
+    return response.data;
+};
 
 // Delete
 export const deleteClass = async (id) => {

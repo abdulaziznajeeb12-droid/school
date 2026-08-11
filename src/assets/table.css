@@ -1,0 +1,244 @@
+.page-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:25px;
+
+flex-wrap:wrap;
+
+gap:15px;
+
+}
+
+
+.table-header .MuiTableCell-root{
+    background:#0f3051;
+    color:white !important;
+    font-size:16px !important;
+    font-weight:700 !important;
+}
+
+/* Body */
+.table-body-row .MuiTableCell-root{
+    font-size:15px !important;
+    font-weight:600 !important;
+}
+
+.main-heading{
+
+font-size:28px;
+
+font-weight:700;
+
+color:#0f3051;
+
+}
+
+.toolbar{
+
+display:flex;
+
+gap:15px;
+
+align-items:center;
+
+}
+
+.searchbox{
+
+width:280px;
+
+height:42px;
+
+padding:0 15px;
+
+border:1px solid #ddd;
+
+border-radius:8px;
+
+font-size:14px;
+
+outline:none;
+
+transition:.3s;
+
+}
+
+.searchbox:focus{
+
+border-color:#1976d2;
+
+box-shadow:0 0 8px rgba(25,118,210,.2);
+
+}
+
+.add-btn{
+
+height:42px;
+
+padding:0 22px;
+
+background:#0e2d4c;
+
+color:white;
+
+border:none;
+
+border-radius:8px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.add-btn:hover{
+
+background:#4b5762;
+
+}
+
+.school-table-container{
+
+border-radius:15px !important;
+
+overflow:hidden;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.table-header{
+
+background:#0f3051;
+
+}
+
+.table-header th{
+
+color:white !important;
+
+font-weight:bold !important;
+
+font-size:17px !important;
+
+}
+
+.table-body-row:hover{
+
+background:#f4f9ff !important;
+}
+
+.status-active{
+
+background:#4caf50;
+
+padding:5px 14px;
+
+color:white;
+
+border-radius:20px;
+
+font-size:16px;
+
+}
+
+.status-inactive{
+
+background:#e53935;
+
+padding:5px 14px;
+
+color:white;
+
+border-radius:20px;
+
+font-size:16px;
+
+}
+
+.edit-btn{
+
+background:#052e57 !important;
+
+color:white;
+
+border:none;
+
+padding:7px 14px;
+
+border-radius:6px;
+
+margin-right:8px;
+
+cursor:pointer;
+
+}
+
+.edit-btn:hover{
+
+background:#68a2d8 !important;
+
+}
+
+.delete-btn{
+
+background:#e53935;
+
+color:white;
+
+border:none;
+
+padding:7px 14px;
+
+border-radius:6px;
+
+cursor:pointer;
+
+}
+
+.delete-btn:hover{
+
+background:#b71c1c;
+
+}
+
+@media(max-width:768px){
+
+.page-header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.toolbar{
+
+width:100%;
+
+flex-direction:column;
+
+}
+
+
+
+.searchbox{
+
+width:100%;
+
+}
+
+.add-btn{
+
+width:100%;
+
+}
+
+}

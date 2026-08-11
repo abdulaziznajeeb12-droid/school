@@ -1,17 +1,31 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
+import "../../assets/dashboard.css";
+
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 
 import {
     getBranches,
     deleteBranch,
-    getBranchById
+    searchBranch
 } from "../../services/branchService";
 
 function BranchList() {
 
     const [branches, setBranches] = useState([]);
-    const [searchId, setSearchId] = useState("");
+    const [search, setSearch] = useState("");
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
 
@@ -27,38 +41,74 @@ function BranchList() {
 
     };
 
-    const searchBranch = async () => {
-
-        if (searchId === "") {
-
-            loadBranches();
-
-            return;
-        }
+    const handleSearch = async () => {
 
         try {
 
-            const data = await getBranchById(searchId);
+            const data = await searchBranch(search);
 
-            setBranches([data]);
+            setBranches(data);
 
-        }
-        catch {
+        } catch (error) {
 
-            alert("Branch Not Found");
+            console.log(error);
 
         }
 
     };
+
+    useEffect(() => {
+
+        const delay = setTimeout(() => {
+
+            if (search.trim() === "") {
+
+                loadBranches();
+
+                return;
+
+            }
+
+            handleSearch();
+
+        }, 300);
+
+        return () => clearTimeout(delay);
+
+    }, [search]);
 
     const handleDelete = async (id) => {
 
         if (!window.confirm("Delete this Branch?"))
             return;
 
-        await deleteBranch(id);
+        try {
 
-        loadBranches();
+            await deleteBranch(id);
+
+            loadBranches();
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert("Delete Failed");
+
+        }
+
+    };
+
+    const handleChangePage = (event, newPage) => {
+
+        setPage(newPage);
+
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+
+        setRowsPerPage(parseInt(event.target.value, 10));
+
+        setPage(0);
 
     };
 
@@ -66,91 +116,185 @@ function BranchList() {
 
         <DashboardLayout>
 
-            <h2>Branches</h2>
+            <div className="page-header">
 
-            <div style={{ marginBottom: "20px" }}>
+                <h2 className="main-heading">
 
-                <input style={{  width:"200px",height:"30px"}}
-                    type="number"
-                    placeholder="Search By ID"
-                    value={searchId}
-                    onChange={(e) => setSearchId(e.target.value)}
-                />
+                    Branch Management
 
-                <button style={{marginLeft:"1px", backgroundColor: "green", color: "white" ,width:"100px",height:"30px"}} onClick={searchBranch}>
-                    Search
-                </button>
+                </h2>
 
-                <button style={{marginLeft:"10px", backgroundColor: "green", color: "white" ,width:"100px",height:"30px"}} onClick={loadBranches}>
-                    Show All
-                </button>
+                <div className="toolbar">
 
-                <Link to="/branches/add" >
+                    <input
+                        className="searchbox"
+                        type="text"
+                        placeholder="Search Branch..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
 
-                    <button style={{marginLeft:"10px", backgroundColor: "green", color: "white" ,width:"100px",height:"30px"}}>
-                        Add Branch
-                    </button>
+                    <Link to="/branches/add">
 
-                </Link>
+                        <button className="add-btn">
+
+                            + Add Branch
+
+                        </button>
+
+                    </Link>
+
+                </div>
 
             </div>
 
-            <table border="1" cellPadding="10">
+            <TableContainer
+                component={Paper}
+                className="school-table-container"
+                elevation={5}
+            >
 
-                <thead>
+                <Table className="school-table">
 
-                    <tr>
+                    <TableHead>
 
-                        <th>ID</th>
-                        <th>Branch Name</th>
-                        <th>School Name</th>
-                        <th>Active</th>
-                        <th>Action</th>
+                        <TableRow className="table-header">
 
-                    </tr>
+                            <TableCell>ID</TableCell>
 
-                </thead>
+                            <TableCell>Branch Name</TableCell>
 
-                <tbody>
+                            <TableCell>School Name</TableCell>
 
-                    {branches.map((branch) => (
+                            <TableCell>Status</TableCell>
 
-                        <tr key={branch.id}>
+                            <TableCell align="center">
 
-                            <td>{branch.id}</td>
-                            <td>{branch.branchName}</td>
-                            <td>{branch.schoolName}</td>
-                            <td>{branch.isActive ? "Yes" : "No"}</td>
+                                Actions
 
-                            <td>
+                            </TableCell>
 
-                                <Link to={`/branches/edit/${branch.id}`}>
+                        </TableRow>
 
-                                    <button>Edit</button>
+                    </TableHead>
 
-                                </Link>
+                    <TableBody>
 
-                                &nbsp;
+                        {(rowsPerPage > 0
 
-                                <button
-                                    onClick={() => handleDelete(branch.id)}
-                                >
-                                    Delete
-                                </button>
+                            ? branches.slice(
 
-                            </td>
+                                page * rowsPerPage,
 
-                        </tr>
+                                page * rowsPerPage + rowsPerPage
 
-                    ))}
+                            )
 
-                </tbody>
+                            : branches
 
-            </table>
+                        ).map((branch) => (
+
+                            <TableRow
+                                key={branch.id}
+                                hover
+                                className="table-body-row"
+                            >
+
+                                <TableCell>
+
+                                    {branch.id}
+
+                                </TableCell>
+
+                                <TableCell>
+
+                                    {branch.branchName}
+
+                                </TableCell>
+
+                                <TableCell>
+
+                                    {branch.schoolName}
+
+                                </TableCell>
+
+                                <TableCell>
+
+                                    <span
+                                        className={
+                                            branch.isActive
+                                                ? "status-active"
+                                                : "status-inactive"
+                                        }
+                                    >
+
+                                        {branch.isActive ? "Active" : "Inactive"}
+
+                                    </span>
+
+                                </TableCell>
+
+                                <TableCell align="center">
+
+                                    <Link to={`/branches/edit/${branch.id}`}>
+
+                                        <button className="edit-btn">
+
+                                            Edit
+
+                                        </button>
+
+                                    </Link>
+
+                                    {/* <button
+                                        className="delete-btn"
+                                        onClick={() => handleDelete(branch.id)}
+                                    >
+
+                                        Delete
+
+                                    </button> */}
+
+                                </TableCell>
+
+                            </TableRow>
+
+                        ))}
+
+                    </TableBody>
+
+                    <TableFooter>
+
+                        <TableRow>
+
+                            <TablePagination
+
+                                rowsPerPageOptions={[5, 10, 25]}
+
+                                count={branches.length}
+
+                                rowsPerPage={rowsPerPage}
+
+                                page={page}
+
+                                onPageChange={handleChangePage}
+
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+
+                            />
+
+                        </TableRow>
+
+                    </TableFooter>
+
+                </Table>
+
+            </TableContainer>
 
         </DashboardLayout>
 
     );
+
 }
 
 export default BranchList;

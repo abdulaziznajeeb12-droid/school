@@ -15,6 +15,14 @@ import SectionList from "../pages/sections/SectionList";
 import AddSection from "../pages/sections/AddSection";
 import EditSection from "../pages/sections/EditSection";
 
+import RoleList from "../pages/roles/RoleList";
+import AddRole from "../pages/roles/AddRole";
+import EditRole from "../pages/roles/EditRole";
+
+import UserList from "../pages/users/UserList";
+import AddUser from "../pages/users/AddUser";
+import EditUser from "../pages/users/EditUser";
+
 import NotFound from "../pages/NotFound";
 import StudentList from "../pages/students/StudentList";
 import AddStudent from "../pages/students/AddStudent";
@@ -55,6 +63,14 @@ function AppRoutes() {
 <Route path="/sections" element={<SectionList />} />
 <Route path="/sections/add" element={<AddSection />} />
 <Route path="/sections/edit/:id" element={<EditSection />} />
+
+<Route path="/roles" element={<RoleList />} />
+<Route path="/roles/add" element={<AddRole />} />
+<Route path="/roles/edit/:id" element={<EditRole />} />
+
+<Route path="/users" element={<UserList />} />
+<Route path="/users/add" element={<AddUser />} />
+<Route path="/users/edit/:id" element={<EditUser />} />
 
       <Route path="/teachers" element={<TeacherList/>}/>
       <Route path="/parents" element={<ParentList />} />

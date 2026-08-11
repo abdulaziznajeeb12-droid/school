@@ -25,8 +25,18 @@ cursor:pointer;
 border-radius:5px;
 
 }
+th{
 
-table{
+background:#0f3051;
+
+color:white;
+
+padding:15px;
+
+}
+
+
+/* table{
 
 width:100%;
 
@@ -38,7 +48,7 @@ border-collapse:collapse;
 
 th{
 
-background:#1976d2;
+background:#0f3051;
 
 color:white;
 
@@ -48,7 +58,7 @@ padding:15px;
 
 td{
 
-padding:12px;
+padding:6px;
 
 border-bottom:1px solid #ddd;
 
@@ -60,7 +70,7 @@ tr:hover{
 
 background:#f5f5f5;
 
-}
+} 
 
 td button{
 
@@ -83,14 +93,14 @@ background:orange;
 color:white;
 
 }
+*/
+/* td button:last-child{
 
-td button:last-child{
-
-background:red;
+background:#0f3051;
 
 color:white;
 
-}
+}  */
 
 .student-form{
 
@@ -160,7 +170,7 @@ border:1px solid gray;
 }
 .edit-btn{
 
-background:#ffc107;
+background:#070604;
 
 color:white;
 

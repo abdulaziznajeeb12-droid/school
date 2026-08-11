@@ -1,57 +1,118 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../layouts/DashboardLayout";
+import "../../assets/dashboard.css";
+
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 
 import {
     getClasses,
-    getClassById,
+    searchClass,
     deleteClass
 } from "../../services/classService";
 
 function ClassList() {
 
     const [classes, setClasses] = useState([]);
-    const [searchId, setSearchId] = useState("");
+    const [search, setSearch] = useState("");
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
+
         loadClasses();
+
     }, []);
 
     const loadClasses = async () => {
+
         const data = await getClasses();
+
         setClasses(data);
+
     };
 
-    const searchClass = async () => {
-
-        if (searchId === "") {
-            loadClasses();
-            return;
-        }
+    const handleSearch = async () => {
 
         try {
 
-            const data = await getClassById(searchId);
+            const data = await searchClass(search);
 
-            setClasses([data]);
+            setClasses(data);
 
         }
-        catch {
 
-            alert("Class Not Found");
+        catch (error) {
+
+            console.log(error);
 
         }
 
     };
+
+    useEffect(() => {
+
+        const delay = setTimeout(() => {
+
+            if (search.trim() === "") {
+
+                loadClasses();
+
+                return;
+
+            }
+
+            handleSearch();
+
+        }, 300);
+
+        return () => clearTimeout(delay);
+
+    }, [search]);
 
     const handleDelete = async (id) => {
 
         if (!window.confirm("Delete this Class?"))
             return;
 
-        await deleteClass(id);
+        try {
 
-        loadClasses();
+            await deleteClass(id);
+
+            loadClasses();
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+            alert("Delete Failed");
+
+        }
+
+    };
+
+    const handleChangePage = (event, newPage) => {
+
+        setPage(newPage);
+
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+
+        setRowsPerPage(parseInt(event.target.value, 10));
+
+        setPage(0);
 
     };
 
@@ -59,118 +120,178 @@ function ClassList() {
 
         <DashboardLayout>
 
-            <h2>Classes</h2>
+            <div className="page-header">
 
-            <div style={{ marginBottom: "20px" }}>
+                <h2 className="main-heading">
 
-                <input
-                    style={{ width: "200px", height: "30px" }}
-                    type="number"
-                    placeholder="Search By ID"
-                    value={searchId}
-                    onChange={(e) => setSearchId(e.target.value)}
-                />
+                    Class Management
 
-                <button
-                    style={{
-                        marginLeft: "1px",
-                        backgroundColor: "green",
-                        color: "white",
-                        width: "100px",
-                        height: "30px"
-                    }}
-                    onClick={searchClass}
-                >
-                    Search
-                </button>
+                </h2>
 
-                <button
-                    style={{
-                        marginLeft: "10px",
-                        backgroundColor: "green",
-                        color: "white",
-                        width: "100px",
-                        height: "30px"
-                    }}
-                    onClick={loadClasses}
-                >
-                    Show All
-                </button>
+                <div className="toolbar">
 
-                <Link to="/classes/add">
+                    <input
+                        className="searchbox"
+                        type="text"
+                        placeholder="Search Class..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
 
-                    <button
-                        style={{
-                            marginLeft: "10px",
-                            backgroundColor: "green",
-                            color: "white",
-                            width: "100px",
-                            height: "30px"
-                        }}
-                    >
-                        Add Class
-                    </button>
+                    <Link to="/classes/add">
 
-                </Link>
+                        <button className="add-btn">
+
+                            + Add Class
+
+                        </button>
+
+                    </Link>
+
+                </div>
 
             </div>
 
-            <table border="1" cellPadding="10">
+            <TableContainer
+                component={Paper}
+                className="school-table-container"
+                elevation={5}
+            >
 
-                <thead>
+                <Table className="school-table">
 
-                    <tr>
+                    <TableHead>
 
-                        <th>ID</th>
-                        <th>Class Name</th>
-                        <th >Branch Name</th>
-                        <th>Active</th>
-                        <th>Action</th>
+                        <TableRow className="table-header">
 
-                    </tr>
+                            <TableCell>ID</TableCell>
 
-                </thead>
+                            <TableCell>Class Name</TableCell>
 
-                <tbody>
+                            <TableCell>Branch Name</TableCell>
 
-                    {classes.map((item) => (
+                            <TableCell>Status</TableCell>
 
-                        <tr key={item.id}>
+                            <TableCell align="center">
 
-                            <td>{item.id}</td>
-                            <td>{item.className}</td>
-                            <td>{item.branchName}</td>
-                            <td>{item.isActive ? "Yes" : "No"}</td>
+                                Actions
 
-                            <td>
+                            </TableCell>
 
-                                <Link to={`/classes/edit/${item.id}`}>
+                        </TableRow>
 
-                                    <button>Edit</button>
+                    </TableHead>
 
-                                </Link>
+                    <TableBody>
 
-                                &nbsp;
+                        {(rowsPerPage > 0
 
-                                <button
-                                    onClick={() => handleDelete(item.id)}
-                                >
-                                    Delete
-                                </button>
+                            ? classes.slice(
 
-                            </td>
+                                page * rowsPerPage,
 
-                        </tr>
+                                page * rowsPerPage + rowsPerPage
 
-                    ))}
+                            )
 
-                </tbody>
+                            : classes
 
-            </table>
+                        ).map((item) => (
+
+                            <TableRow
+                                key={item.id}
+                                hover
+                                className="table-body-row"
+                            >
+
+                                <TableCell>
+
+                                    {item.id}
+
+                                </TableCell>
+
+                                <TableCell>
+
+                                    {item.className}
+
+                                </TableCell>
+
+                                <TableCell>
+
+                                    {item.branchName}
+
+                                </TableCell>
+
+                                <TableCell>
+
+                                    <span
+                                        className={
+                                            item.isActive
+                                                ? "status-active"
+                                                : "status-inactive"
+                                        }
+                                    >
+
+                                        {item.isActive ? "Active" : "Inactive"}
+
+                                    </span>
+
+                                </TableCell>
+
+                                <TableCell align="center">
+
+                                    <Link to={`/classes/edit/${item.id}`}>
+
+                                        <button className="edit-btn">
+
+                                            Edit
+
+                                        </button>
+
+                                    </Link>
+
+                                    {/* <button
+                                        className="delete-btn"
+                                        onClick={() => handleDelete(item.id)}
+                                    >
+
+                                        Delete
+
+                                    </button> */}
+
+                                </TableCell>
+
+                            </TableRow>
+
+                        ))}
+
+                    </TableBody>
+
+                    <TableFooter>
+
+                        <TableRow>
+
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25]}
+                                count={classes.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+
+                        </TableRow>
+
+                    </TableFooter>
+
+                </Table>
+
+            </TableContainer>
 
         </DashboardLayout>
 
     );
+
 }
 
 export default ClassList;
