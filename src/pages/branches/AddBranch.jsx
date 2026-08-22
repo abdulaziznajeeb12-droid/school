@@ -151,7 +151,7 @@ function AddBranch() {
                                 <em>Select School</em>
                             </MenuItem>
 
-                            {schools.map((school) => (
+                            {schools.filter((school) => school.isActive === true).map((school) => (
 
                                 <MenuItem
                                     key={school.id}

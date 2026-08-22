@@ -1,0 +1,182 @@
+.teacher-subject-form-card {
+
+    max-width: 800px;
+
+    margin: 40px auto;
+
+    padding: 35px;
+
+    border-radius: 15px !important;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, .08) !important;
+
+}
+
+
+.teacher-subject-form-title {
+
+    text-align: center;
+
+    margin-bottom: 8px !important;
+
+    font-weight: 700 !important;
+
+    color: #0f3051;
+
+}
+
+
+.teacher-subject-form-subtitle {
+
+    text-align: center;
+
+    margin-bottom: 30px !important;
+
+    color: #777;
+
+}
+
+
+.teacher-subject-form-container {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 22px;
+
+}
+
+
+/* Subjects full width */
+
+.teacher-subject-form-container
+.MuiFormControl-root:last-of-type {
+
+    grid-column: span 2;
+
+}
+
+
+/* Buttons */
+
+.teacher-subject-form-buttons {
+
+    grid-column: span 2;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 15px;
+
+    margin-top: 10px;
+
+}
+
+
+.teacher-subject-form-buttons
+.MuiButton-root {
+
+    min-width: 150px;
+
+    height: 48px;
+
+    font-weight: 600;
+
+}
+
+
+.teacher-subject-form-buttons
+.MuiButton-contained {
+
+    background: #0f3051;
+
+}
+
+
+.teacher-subject-form-buttons
+.MuiButton-contained:hover {
+
+    background: #1976d2;
+
+}
+
+
+/* Subject chips */
+
+.subject-chips {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+}
+
+
+.subject-chip {
+
+    background: #e8f1fb;
+
+    color: #0f3051;
+
+    border-radius: 20px;
+
+    padding: 5px 12px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+    .teacher-subject-form-card {
+
+        margin: 20px;
+
+        padding: 25px;
+
+    }
+
+
+    .teacher-subject-form-container {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .teacher-subject-form-container
+    .MuiFormControl-root:last-of-type {
+
+        grid-column: span 1;
+
+    }
+
+
+    .teacher-subject-form-buttons {
+
+        grid-column: span 1;
+
+        flex-direction: column;
+
+    }
+
+
+    .teacher-subject-form-buttons
+    .MuiButton-root {
+
+        width: 100%;
+
+    }
+
+}

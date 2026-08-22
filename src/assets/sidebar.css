@@ -1,189 +1,207 @@
-.sidebar{
+/* =========================
+   SIDEBAR
+========================= */
 
-position:fixed;
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
 
-left:0;
+    width: 260px;
+    height: 100vh;
 
-top:0;
+    background: #0f3051;
 
-width:260px;
+    transition: width 0.35s ease;
 
-height:100vh;
+    /* Sidebar itself scroll karega */
+    overflow-y: auto;
+    overflow-x: hidden;
 
-background:#0f3051;
+    z-index: 1300;
 
-transition:.35s;
-
-overflow:hidden;
-
-z-index:1300;
-
-box-shadow:3px 0 15px rgba(0,0,0,.15);
-
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
 }
 
-.sidebar.close{
-
-width:80px;
-
+.sidebar.close {
+    width: 80px;
 }
 
-/* Logo */
 
-.logo{
+/* =========================
+   LOGO
+========================= */
 
-height:70px;
+.logo {
+    height: 70px;
 
-display:flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-align-items:center;
+    gap: 10px;
 
-justify-content:center;
+    color: white;
 
-gap:10px;
+    font-size: 16px;
+    font-weight: bold;
 
-color:white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-font-size:16px;
+    /* Logo scroll ke waqt upar rahe */
+    position: sticky;
+    top: 0;
 
-font-weight:bold;
+    background: #0f3051;
 
-border-bottom:1px solid rgba(255,255,255,.1);
-
+    z-index: 10;
 }
 
-/* Toggle */
 
-.toggle{
+/* =========================
+   TOGGLE
+========================= */
 
-position:absolute;
+.toggle {
+    position: absolute;
 
-right:-11px;
+    right: 8px;
+    top: 18px;
 
-top:18px;
+    width: 36px;
+    height: 36px;
 
-width:36px;
+    border: none;
+    border-radius: 50%;
 
-height:36px;
+    background: #1976d2;
 
-border:none;
+    color: white;
 
-border-radius:50%;
+    cursor: pointer;
 
-background:#1976d2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-color:white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 
-cursor:pointer;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-box-shadow:0 5px 15px rgba(0,0,0,.3);
-
+    z-index: 20;
 }
 
-/* Menu */
 
-.sidebar ul{
+/* =========================
+   MENU
+========================= */
 
-padding:0px 6px;
+.sidebar ul {
+    padding: 10px 6px;
+    margin: 0;
 
-list-style:none;
-
+    list-style: none;
 }
 
-.sidebar li{
 
-margin-bottom:5px;
+/* =========================
+   MENU ITEM
+========================= */
 
-border-radius:10px;
+.sidebar li {
+    margin-bottom: 5px;
 
-overflow:hidden;
+    border-radius: 10px;
 
+    overflow: hidden;
 }
 
-.sidebar li a{
 
-display:flex;
+/* =========================
+   LINK
+========================= */
 
-align-items:center;
+.sidebar li a {
+    display: flex;
 
-gap:18px;
+    align-items: center;
 
-padding:5px;
+    gap: 18px;
 
-text-decoration:none;
+    padding: 12px 10px;
 
-color:white;
+    text-decoration: none;
 
-font-size:17px;
+    color: white;
 
-transition:.5s;
+    font-size: 16px;
 
+    transition: 0.25s;
 }
 
-/* Hover */
 
-.sidebar li:hover{
+/* =========================
+   HOVER
+========================= */
 
-background:#032445;
-
+.sidebar li:hover {
+    background: #032445;
 }
 
-/* Active */
 
-.sidebar li.active{
+/* =========================
+   ACTIVE
+========================= */
 
-background:#082944;
-
+.sidebar li.active {
+    background: #082944;
 }
 
-/* Icon */
 
-.sidebar svg{
+/* =========================
+   ICON
+========================= */
 
-font-size:24px;
-
+.sidebar svg {
+    font-size: 24px;
+    flex-shrink: 0;
 }
 
-/* Collapse */
 
-.sidebar.close span{
+/* =========================
+   COLLAPSED
+========================= */
 
-display:none;
-
+.sidebar.close span {
+    display: none;
 }
 
-.sidebar.close h2{
-
-display:none;
-
+.sidebar.close h2 {
+    display: none;
 }
 
-.sidebar.close li a{
-
-justify-content:center;
-
-padding:18px;
-
+.sidebar.close li a {
+    justify-content: center;
+    padding: 14px 8px;
+    gap: 0;
 }
 
-/* Scroll */
 
-.sidebar::-webkit-scrollbar{
+/* =========================
+   SCROLLBAR
+========================= */
 
-width:5px;
-
+.sidebar::-webkit-scrollbar {
+    width: 5px;
 }
 
-.sidebar::-webkit-scrollbar-thumb{
+.sidebar::-webkit-scrollbar-track {
+    background: #0f3051;
+}
 
-background:#1976d2;
+.sidebar::-webkit-scrollbar-thumb {
+    background: #1976d2;
+    border-radius: 20px;
+}
 
-border-radius:20px;
-
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #2196f3;
 }

@@ -250,7 +250,7 @@ function EditBranch() {
 
                             {
 
-                                schools.map((school) => (
+                                schools.filter((school) =>school.isActive === true ).map((school) =>(
 
                                     <MenuItem
                                         key={school.id}

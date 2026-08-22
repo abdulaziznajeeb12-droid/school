@@ -49,6 +49,7 @@ function AddSchool() {
 
         setSnackbarSeverity(severity);
 
+
         setOpenSnackbar(true);
 
     };
@@ -207,15 +208,10 @@ function AddSchool() {
                     <Box className="form-buttons">
 
                         <Button
-
                             variant="contained"
-
                             color="primary"
-
                             type="submit"
-
                             disabled={loading}
-
                         >
 
                             {loading

@@ -329,7 +329,7 @@ function AddSection() {
                                 </MenuItem>
 
 
-                                {classes.map((item) => (
+                                {classes.filter((classes) => classes.isActive ===true ).map((item) => (
 
                                     <MenuItem
                                         key={item.id}

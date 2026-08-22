@@ -1,0 +1,161 @@
+/* =========================================
+   FORM CARD
+========================================= */
+
+.form-card {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 35px;
+    border-radius: 15px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .08) !important;
+}
+
+
+/* =========================================
+   FORM TITLE
+========================================= */
+
+.form-title {
+    text-align: center;
+    margin-bottom: 10px !important;
+    font-weight: 700 !important;
+    color: #0f3051;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.form-container .MuiButton-contained {
+    height: 50px;
+    font-size: 17px;
+    font-weight: bold;
+    background: #0f3051;
+}
+
+
+.form-container .MuiButton-contained:hover {
+    background: #1976d2;
+}
+
+
+/* =========================================
+   OUTLINED CANCEL
+========================================= */
+
+.form-container .MuiButton-outlined {
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   MULTI SELECT
+========================================= */
+
+.form-container .MuiAutocomplete-root {
+    background: white;
+}
+
+
+/* =========================================
+   AUTOCOMPLETE CHIPS
+========================================= */
+
+.form-container .MuiAutocomplete-tag {
+    background: #0f3051;
+    color: white;
+}
+
+
+.form-container .MuiAutocomplete-tag .MuiChip-deleteIcon {
+    color: white;
+}
+
+
+/* =========================================
+   TABLE BUTTONS
+========================================= */
+
+.edit-btn {
+    border: none;
+    background: #1976d2;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+
+.edit-btn:hover {
+    background: #0f3051;
+}
+
+
+.delete-btn {
+    border: none;
+    background: #d32f2f;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+.delete-btn:hover {
+    background: #b71c1c;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .form-card {
+        margin: 15px;
+        padding: 20px;
+    }
+
+}

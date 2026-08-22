@@ -4,8 +4,7 @@ import {
 } from "react";
 
 import {
-    useNavigate,
-    useParams
+    useNavigate
 } from "react-router-dom";
 
 import DashboardLayout
@@ -24,12 +23,12 @@ import {
     MenuItem,
     Box,
     Snackbar,
-    Alert
+    Alert,
+    Autocomplete
 } from "@mui/material";
 
 import {
-    getStudentClassById,
-    updateStudentClass,
+    addStudentClass,
     getBranchByClassId,
     getSectionsByClassId,
     getAvailableStudents
@@ -38,31 +37,24 @@ import {
 import { getClasses } from "../../services/classService";
 
 
-function EditStudentClass() {
+function AddStudentClass() {
 
     const navigate = useNavigate();
-
-    const { id } = useParams();
 
 
     // ==========================================
     // FORM
     // ==========================================
 
-    const [studentId, setStudentId] =
-        useState("");
+    const [classId, setClassId] = useState("");
 
-    const [classId, setClassId] =
-        useState("");
+    const [branchId, setBranchId] = useState("");
 
-    const [sectionId, setSectionId] =
-        useState("");
+    const [branchName, setBranchName] = useState("");
 
-    const [branchName, setBranchName] =
-        useState("");
+    const [sectionId, setSectionId] = useState("");
 
-    const [rollNo, setRollNo] =
-        useState("");
+    const [studentIds, setStudentIds] = useState([]);
 
     const [admissionDate, setAdmissionDate] =
         useState("");
@@ -72,7 +64,7 @@ function EditStudentClass() {
 
 
     // ==========================================
-    // DROPDOWNS
+    // DROPDOWN DATA
     // ==========================================
 
     const [classes, setClasses] =
@@ -97,130 +89,30 @@ function EditStudentClass() {
 
 
     // ==========================================
-    // INITIAL LOAD
+    // LOAD CLASSES
     // ==========================================
 
     useEffect(() => {
 
-        loadData();
+        loadClasses();
 
-    }, [id]);
+    }, []);
 
 
-    const loadData = async () => {
+    const loadClasses = async () => {
 
         try {
 
-            const classData =
-                await getClasses();
+            const data = await getClasses();
 
-            setClasses(classData);
-
-
-            const data =
-                await getStudentClassById(id);
-
-
-            setStudentId(
-                data.studentId
-            );
-
-            setClassId(
-                data.classId
-            );
-
-            setSectionId(
-                data.sectionId
-            );
-
-            setRollNo(
-                data.rollNo ?? ""
-            );
-
-            setAdmissionDate(
-                data.admissionDate
-                    ? data.admissionDate.substring(
-                        0,
-                        10
-                    )
-                    : ""
-            );
-
-            setIsActive(
-                data.isActive ?? true
-            );
-
-
-            // Branch
-
-            const branch =
-                await getBranchByClassId(
-                    data.classId
-                );
-
-            setBranchName(
-                branch.branchName
-            );
-
-
-            // Sections
-
-            const sectionData =
-                await getSectionsByClassId(
-                    data.classId
-                );
-
-            setSections(
-                sectionData
-            );
-
-
-            // Students
-
-            const studentData =
-                await getAvailableStudents(
-                    data.classId,
-                    data.sectionId
-                );
-
-
-            // Existing student may not be in
-            // available students because already assigned.
-            // Add it manually.
-
-            const existingStudent = {
-                id: data.studentId,
-                studentName: data.studentName
-            };
-
-
-            const exists =
-                studentData.some(
-                    x =>
-                        x.id ===
-                        data.studentId
-                );
-
-
-            if (!exists) {
-
-                studentData.unshift(
-                    existingStudent
-                );
-
-            }
-
-
-            setStudents(
-                studentData
-            );
+            setClasses(data);
 
         } catch (error) {
 
             console.log(error);
 
             showSnackbar(
-                "Failed to load assignment",
+                "Failed to load classes",
                 "error"
             );
 
@@ -235,51 +127,67 @@ function EditStudentClass() {
 
     const handleClassChange = async (e) => {
 
-        const newClassId =
+        const selectedClassId =
             e.target.value;
 
-        setClassId(newClassId);
+        setClassId(selectedClassId);
 
+        // reset dependent fields
+
+        setBranchId("");
         setBranchName("");
-
-        setSections([]);
 
         setSectionId("");
 
+        setSections([]);
+
         setStudents([]);
 
-        setStudentId("");
+        setStudentIds([]);
 
 
-        if (!newClassId) {
+        if (!selectedClassId) {
             return;
         }
 
 
         try {
 
+            // Fetch Branch
+
             const branch =
                 await getBranchByClassId(
-                    newClassId
+                    selectedClassId
                 );
+
+
+            setBranchId(
+                branch.branchId
+            );
 
             setBranchName(
                 branch.branchName
             );
 
 
+            // Fetch Sections
+
             const sectionData =
                 await getSectionsByClassId(
-                    newClassId
+                    selectedClassId
                 );
 
-            setSections(
-                sectionData
-            );
+
+            setSections(sectionData);
 
         } catch (error) {
 
             console.log(error);
+
+            showSnackbar(
+                "Failed to load class information",
+                "error"
+            );
 
         }
 
@@ -292,19 +200,19 @@ function EditStudentClass() {
 
     const handleSectionChange = async (e) => {
 
-        const newSectionId =
+        const selectedSectionId =
             e.target.value;
 
         setSectionId(
-            newSectionId
+            selectedSectionId
         );
 
         setStudents([]);
 
-        setStudentId("");
+        setStudentIds([]);
 
 
-        if (!newSectionId || !classId) {
+        if (!selectedSectionId || !classId) {
             return;
         }
 
@@ -314,8 +222,9 @@ function EditStudentClass() {
             const data =
                 await getAvailableStudents(
                     classId,
-                    newSectionId
+                    selectedSectionId
                 );
+
 
             setStudents(data);
 
@@ -323,26 +232,53 @@ function EditStudentClass() {
 
             console.log(error);
 
+            showSnackbar(
+                "Failed to load students",
+                "error"
+            );
+
         }
 
     };
 
 
     // ==========================================
-    // UPDATE
+    // SAVE
     // ==========================================
 
-    const handleUpdate = async (e) => {
+    const saveStudentClass = async (e) => {
 
         e.preventDefault();
 
 
-        if (!studentId ||
-            !classId ||
-            !sectionId) {
+        if (!classId) {
 
             showSnackbar(
-                "Please fill all required fields",
+                "Please select a class",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (!sectionId) {
+
+            showSnackbar(
+                "Please select a section",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (studentIds.length === 0) {
+
+            showSnackbar(
+                "Please select at least one student",
                 "error"
             );
 
@@ -353,24 +289,14 @@ function EditStudentClass() {
 
         try {
 
-            await updateStudentClass({
+            await addStudentClass({
 
-                enrolledId: Number(id),
+                classId: Number(classId),
 
-                studentId: Number(
-                    studentId
-                ),
+                sectionId: Number(sectionId),
 
-                classId: Number(
-                    classId
-                ),
-
-                sectionId: Number(
-                    sectionId
-                ),
-
-                rollNo: Number(
-                    rollNo
+                studentIds: studentIds.map(
+                    (id) => Number(id)
                 ),
 
                 admissionDate:
@@ -382,16 +308,14 @@ function EditStudentClass() {
 
 
             showSnackbar(
-                "Student assignment updated successfully!",
+                "Students assigned successfully!",
                 "success"
             );
 
 
             setTimeout(() => {
 
-                navigate(
-                    "/studentclasses"
-                );
+                navigate("/studentclasses");
 
             }, 1500);
 
@@ -400,8 +324,12 @@ function EditStudentClass() {
 
             console.log(error);
 
+            const message =
+                error.response?.data?.message ||
+                "Failed to assign students.";
+
             showSnackbar(
-                "Update failed!",
+                message,
                 "error"
             );
 
@@ -445,6 +373,19 @@ function EditStudentClass() {
     };
 
 
+    // ==========================================
+    // SELECTED STUDENT OBJECTS
+    // ==========================================
+
+    const selectedStudents =
+        students.filter(
+            (student) =>
+                studentIds.includes(
+                    student.id
+                )
+        );
+
+
     return (
 
         <DashboardLayout>
@@ -459,7 +400,7 @@ function EditStudentClass() {
                     className="form-title"
                 >
 
-                    Edit Student Assignment
+                    Assign Students
 
                 </Typography>
 
@@ -472,19 +413,21 @@ function EditStudentClass() {
                     }}
                 >
 
-                    Update student class assignment
+                    Assign multiple students to a class
 
                 </Typography>
 
 
                 <Box
                     component="form"
-                    onSubmit={handleUpdate}
+                    onSubmit={saveStudentClass}
                     className="form-container"
                 >
 
 
+                    {/* ================================= */}
                     {/* CLASS */}
+                    {/* ================================= */}
 
                     <FormControl
                         fullWidth
@@ -495,6 +438,7 @@ function EditStudentClass() {
                             Class
                         </InputLabel>
 
+
                         <Select
                             value={classId}
                             label="Class"
@@ -502,6 +446,13 @@ function EditStudentClass() {
                                 handleClassChange
                             }
                         >
+
+                            <MenuItem value="">
+                                <em>
+                                    Select Class
+                                </em>
+                            </MenuItem>
+
 
                             {classes.map(
                                 (item) => (
@@ -523,7 +474,9 @@ function EditStudentClass() {
                     </FormControl>
 
 
+                    {/* ================================= */}
                     {/* BRANCH */}
+                    {/* ================================= */}
 
                     <TextField
                         fullWidth
@@ -532,19 +485,28 @@ function EditStudentClass() {
                         InputProps={{
                             readOnly: true
                         }}
+                        helperText={
+                            branchName
+                                ? "Branch automatically loaded from selected class"
+                                : "Select a class first"
+                        }
                     />
 
 
+                    {/* ================================= */}
                     {/* SECTION */}
+                    {/* ================================= */}
 
                     <FormControl
                         fullWidth
                         required
+                        disabled={!classId}
                     >
 
                         <InputLabel>
                             Section
                         </InputLabel>
+
 
                         <Select
                             value={sectionId}
@@ -553,6 +515,13 @@ function EditStudentClass() {
                                 handleSectionChange
                             }
                         >
+
+                            <MenuItem value="">
+                                <em>
+                                    Select Section
+                                </em>
+                            </MenuItem>
+
 
                             {sections.map(
                                 (section) => (
@@ -580,70 +549,67 @@ function EditStudentClass() {
                     </FormControl>
 
 
-                    {/* STUDENT */}
+                    {/* ================================= */}
+                    {/* MULTIPLE STUDENTS */}
+                    {/* ================================= */}
 
-                    <FormControl
+                    <Autocomplete
+                        multiple
                         fullWidth
-                        required
-                    >
-
-                        <InputLabel>
-                            Student
-                        </InputLabel>
-
-                        <Select
-                            value={studentId}
-                            label="Student"
-                            onChange={(e) =>
-                                setStudentId(
-                                    e.target.value
-                                )
-                            }
-                        >
-
-                            {students.map(
-                                (student) => (
-
-                                    <MenuItem
-                                        key={
-                                            student.id
-                                        }
-                                        value={
-                                            student.id
-                                        }
-                                    >
-
-                                        {
-                                            student.studentName
-                                        }
-
-                                    </MenuItem>
-
-                                )
-                            )}
-
-                        </Select>
-
-                    </FormControl>
-
-
-                    {/* ROLL NO */}
-
-                    <TextField
-                        fullWidth
-                        label="Roll No"
-                        type="number"
-                        value={rollNo}
-                        onChange={(e) =>
-                            setRollNo(
-                                e.target.value
-                            )
+                        disabled={
+                            !classId ||
+                            !sectionId
                         }
-                        required
+                        options={students}
+                        value={selectedStudents}
+                        onChange={(
+                            event,
+                            newValue
+                        ) => {
+
+                            setStudentIds(
+                                newValue.map(
+                                    (student) =>
+                                        student.id
+                                )
+                            );
+
+                        }}
+                        getOptionLabel={(
+                            option
+                        ) =>
+                            option.studentName
+                        }
+                        isOptionEqualToValue={(
+                            option,
+                            value
+                        ) =>
+                            option.id === value.id
+                        }
+                        renderInput={(
+                            params
+                        ) => (
+
+                            <TextField
+                                {...params}
+                                label="Students"
+                                placeholder={
+                                    sectionId
+                                        ? "Select students..."
+                                        : "Select section first"
+                                }
+                                required={
+                                    studentIds.length === 0
+                                }
+                            />
+
+                        )}
                     />
 
 
+                    {/* ================================= */}
                     {/* ADMISSION DATE */}
+                    {/* ================================= */}
 
                     <TextField
                         fullWidth
@@ -661,9 +627,12 @@ function EditStudentClass() {
                     />
 
 
+                    {/* ================================= */}
                     {/* ACTIVE */}
+                    {/* ================================= */}
 
                     <FormControlLabel
+
                         control={
 
                             <Checkbox
@@ -676,11 +645,15 @@ function EditStudentClass() {
                             />
 
                         }
+
                         label="Active"
+
                     />
 
 
-                    {/* UPDATE */}
+                    {/* ================================= */}
+                    {/* BUTTON */}
+                    {/* ================================= */}
 
                     <Button
                         type="submit"
@@ -688,7 +661,7 @@ function EditStudentClass() {
                         size="large"
                     >
 
-                        Update Student
+                        Assign Students
 
                     </Button>
 
@@ -713,7 +686,9 @@ function EditStudentClass() {
             </Paper>
 
 
+            {/* ================================= */}
             {/* SNACKBAR */}
+            {/* ================================= */}
 
             <Snackbar
                 open={snackbar.open}
@@ -749,4 +724,4 @@ function EditStudentClass() {
 }
 
 
-export default EditStudentClass;
+export default AddStudentClass;

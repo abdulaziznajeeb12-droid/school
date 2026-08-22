@@ -1,0 +1,410 @@
+/* =========================
+   PAGE
+========================= */
+
+.fees-page {
+    padding: 25px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.fees-header {
+    margin-bottom: 25px;
+}
+
+.fees-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: #0f3051;
+}
+
+.fees-header p {
+    margin-top: 5px;
+    color: #777;
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.fees-message {
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+
+/* =========================
+   FORM CARD
+========================= */
+
+.fees-form-card {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08);
+
+    margin-bottom: 25px;
+}
+
+.fees-form-card h2 {
+    margin: 0 0 20px 0;
+
+    font-size: 20px;
+
+    color: #0f3051;
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.fees-form {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 20px;
+}
+
+.fee-field {
+    display: flex;
+
+    flex-direction: column;
+}
+
+.fee-field label {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+    color: #333;
+}
+
+.fee-field input,
+.fee-field select,
+.fee-field textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    padding: 0 12px;
+
+    height: 44px;
+
+    font-size: 14px;
+
+    outline: none;
+
+    background: white;
+}
+
+.fee-field textarea {
+    height: 90px;
+
+    padding-top: 12px;
+
+    resize: vertical;
+}
+
+.fee-field input:focus,
+.fee-field select:focus,
+.fee-field textarea:focus {
+    border-color: #1976d2;
+}
+
+
+/* =========================
+   FORM BUTTONS
+========================= */
+
+.fee-form-buttons {
+    grid-column: 1 / -1;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 5px;
+}
+
+.fee-save-btn {
+    background: #1976d2;
+
+    color: white;
+
+    border: none;
+
+    padding: 11px 25px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.fee-save-btn:hover {
+    background: #125ca8;
+}
+
+.fee-cancel-btn {
+    background: #eee;
+
+    color: #444;
+
+    border: none;
+
+    padding: 11px 25px;
+
+    border-radius: 6px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   TABLE CARD
+========================= */
+
+.fees-table-card {
+    background: white;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08);
+
+    overflow: hidden;
+}
+
+
+/* =========================
+   TABLE HEADER
+========================= */
+
+.fees-table-header {
+    padding: 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    border-bottom: 1px solid #eee;
+}
+
+.fees-table-header h2 {
+    margin: 0;
+
+    font-size: 20px;
+
+    color: #0f3051;
+}
+
+.fees-table-header span {
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.fees-table-wrapper {
+    overflow-x: auto;
+}
+
+.fees-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 850px;
+}
+
+.fees-table th {
+    background: #f7f9fc;
+
+    padding: 15px;
+
+    text-align: left;
+
+    font-size: 14px;
+
+    color: #444;
+}
+
+.fees-table td {
+    padding: 15px;
+
+    border-top: 1px solid #eee;
+
+    font-size: 14px;
+}
+
+.fees-table tbody tr {
+    transition: 0.2s;
+}
+
+.fees-table tbody tr:hover {
+    background: #f4f7fb;
+}
+
+.fee-name {
+    font-weight: 600;
+
+    color: #0f3051;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.fee-status {
+    display: inline-block;
+
+    padding: 6px 13px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.fee-status.paid {
+    background: #e8f5e9;
+
+    color: #2e7d32;
+}
+
+.fee-status.pending {
+    background: #fff8e1;
+
+    color: #f57c00;
+}
+
+.fee-status.partial {
+    background: #e3f2fd;
+
+    color: #1976d2;
+}
+
+.fee-status.overdue {
+    background: #ffebee;
+
+    color: #c62828;
+}
+
+
+/* =========================
+   EDIT
+========================= */
+
+.edit-btn {
+    background: #1976d2;
+
+    color: white;
+
+    border: none;
+
+    padding: 8px 16px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    margin-right: 8px;
+}
+
+.edit-btn:hover {
+    background: #0d47a1;
+}
+
+
+/* =========================
+   DELETE
+========================= */
+
+.delete-btn {
+    background: #d32f2f;
+
+    color: white;
+
+    border: none;
+
+    padding: 8px 16px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.delete-btn:hover {
+    background: #b71c1c;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .fees-form {
+        grid-template-columns: 1fr;
+    }
+
+    .fee-form-buttons {
+        grid-column: auto;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .fees-page {
+        padding: 15px;
+    }
+
+    .fees-form-card {
+        padding: 18px;
+    }
+
+}

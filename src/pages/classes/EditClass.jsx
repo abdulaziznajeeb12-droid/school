@@ -350,7 +350,7 @@ function EditClass() {
                                 </MenuItem>
 
 
-                                {branches.map((branch) => (
+                                 {branches.filter((branch) =>branch.isActive===true ).map((branch) => (
 
                                     <MenuItem
                                         key={branch.id}
@@ -361,7 +361,7 @@ function EditClass() {
 
                                     </MenuItem>
 
-                                ))}
+                                 ))}
 
                             </Select>
 
