@@ -383,7 +383,7 @@ function TeacherSubjectList() {
                                     </TableCell>
 <TableCell>
                                         {
-                                            item.dayOfWeek
+                                            item.dayOfWeek  
                                         }
                                     </TableCell>
 
