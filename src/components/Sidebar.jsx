@@ -1,4 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
+
+import {
+    Link,
+    useLocation,
+    useNavigate
+} from "react-router-dom";
+
+import {
+    useEffect,
+    useRef
+} from "react";
+
 import "../assets/sidebar.css";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -14,12 +25,106 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 
 function Sidebar({ open, setOpen }) {
 
     const location = useLocation();
+    const navigate = useNavigate();
 
+    // =====================================================
+    // SIDEBAR REF
+    // =====================================================
+
+    const sidebarRef = useRef(null);
+
+
+    // =====================================================
+    // SAVE + RESTORE SIDEBAR SCROLL POSITION
+    // =====================================================
+
+    useEffect(() => {
+
+        const sidebar = sidebarRef.current;
+
+        if (!sidebar) return;
+
+
+        // ---------------------------------------------
+        // Restore previous scroll position
+        // ---------------------------------------------
+
+        const savedScroll =
+            sessionStorage.getItem("sidebarScroll");
+
+        if (savedScroll !== null) {
+
+            setTimeout(() => {
+
+                sidebar.scrollTop =
+                    parseInt(savedScroll, 10);
+
+            }, 0);
+
+        }
+
+
+        // ---------------------------------------------
+        // Save scroll position while scrolling
+        // ---------------------------------------------
+
+        const handleScroll = () => {
+
+            sessionStorage.setItem(
+                "sidebarScroll",
+                sidebar.scrollTop.toString()
+            );
+
+        };
+
+
+        sidebar.addEventListener(
+            "scroll",
+            handleScroll
+        );
+
+
+        // ---------------------------------------------
+        // Cleanup
+        // ---------------------------------------------
+
+        return () => {
+
+            sidebar.removeEventListener(
+                "scroll",
+                handleScroll
+            );
+
+        };
+
+    }, []);
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    const handleLogout = () => {
+
+        localStorage.removeItem("user");
+
+        // Sidebar scroll position clear
+        sessionStorage.removeItem("sidebarScroll");
+
+        navigate("/");
+
+    };
+
+
+    // =====================================================
+    // MENUS
+    // =====================================================
 
     const menus = [
 
@@ -65,22 +170,10 @@ function Sidebar({ open, setOpen }) {
             path: "/users"
         },
 
-        // {
-        //     name: "Students",
-        //     icon: <PeopleIcon />,
-        //     path: "/students"
-        // },
-
         {
             name: "Assign Students",
             icon: <AssignmentIndIcon />,
-            path: "/student-class"
-        },
-
-        {
-            name: "Subjects",
-            icon: <MenuBookIcon />,
-            path: "/subjects"
+            path: "/studentclasses"
         },
 
         {
@@ -90,9 +183,33 @@ function Sidebar({ open, setOpen }) {
         },
 
         {
-            name: "Attendance",
+            name: "Timetable",
+            icon: <MenuBookIcon />,
+            path: "/timetable"
+        },
+
+        {
+            name: "Student Report",
             icon: <FactCheckIcon />,
+            path: "/reports/student-report"
+        },
+
+        {
+            name: "Mark Attendance",
+            icon: <AssignmentIndIcon />,
             path: "/attendance"
+        },
+
+        {
+            name: "Attendance Records",
+            icon: <AssignmentIndIcon />,
+            path: "/attendance/list"
+        },
+
+        {
+            name: "RFID Card Management",
+            icon: <AssignmentIndIcon />,
+            path: "/attendance/RFIDCardAssign"
         },
 
         {
@@ -107,58 +224,58 @@ function Sidebar({ open, setOpen }) {
             path: "/fees/student-fees"
         },
 
-        // {
-        //     name: "Teachers",
-        //     icon: <PeopleIcon />,
-        //     path: "/teachers"
-        // },
-
         {
-            name: "Parents",
-            icon: <PeopleIcon />,
-            path: "/parents"
+            name: "Exam Types",
+            icon: <FactCheckIcon />,
+            path: "/examtypes"
         },
 
         {
             name: "Exams",
             icon: <FactCheckIcon />,
-            path: "/exams"
+            path: "/exam"
         },
 
         {
-            name: "Library",
-            icon: <MenuBookIcon />,
-            path: "/library"
-        },
-
-        {
-            name: "Transport",
-            icon: <ApartmentIcon />,
-            path: "/transport"
-        },
-
-        {
-            name: "Reports",
+            name: "Marks",
             icon: <FactCheckIcon />,
-            path: "/reports"
+            path: "/marks"
         },
 
         {
-            name: "Settings",
-            icon: <AdminPanelSettingsIcon />,
-            path: "/settings"
+            name: "Fee Vouchers",
+            icon: <PaymentsIcon />,
+            path: "/fees/vouchers"
         }
 
     ];
 
 
+    // =====================================================
+    // CHECK ACTIVE MENU
+    // =====================================================
+
+    const isActive = (path) => {
+
+        return location.pathname === path;
+
+    };
+
+
+    // =====================================================
+    // RETURN
+    // =====================================================
+
     return (
 
-        <div className={`sidebar ${open ? "" : "close"}`}>
+        <div
+            ref={sidebarRef}
+            className={`sidebar ${open ? "" : "close"}`}
+        >
 
-            {/* ===============================
+            {/* =====================================================
                 LOGO
-            =============================== */}
+            ===================================================== */}
 
             <div className="logo">
 
@@ -176,17 +293,19 @@ function Sidebar({ open, setOpen }) {
 
 
                 {open && (
+
                     <h2>
-                        Brilliant School
+                        School Menu
                     </h2>
+
                 )}
 
             </div>
 
 
-            {/* ===============================
+            {/* =====================================================
                 MENU
-            =============================== */}
+            ===================================================== */}
 
             <ul>
 
@@ -195,7 +314,7 @@ function Sidebar({ open, setOpen }) {
                     <li
                         key={item.path}
                         className={
-                            location.pathname === item.path
+                            isActive(item.path)
                                 ? "active"
                                 : ""
                         }
@@ -206,9 +325,11 @@ function Sidebar({ open, setOpen }) {
                             {item.icon}
 
                             {open && (
+
                                 <span>
                                     {item.name}
                                 </span>
+
                             )}
 
                         </Link>
@@ -217,6 +338,32 @@ function Sidebar({ open, setOpen }) {
 
                 ))}
 
+
+                {/* =====================================================
+                    LOGOUT
+                ===================================================== */}
+
+                <li className="logout-item">
+
+                    <button
+                        onClick={handleLogout}
+                        className="logout-button"
+                    >
+
+                        <LogoutIcon />
+
+                        {open && (
+
+                            <span>
+                                Logout
+                            </span>
+
+                        )}
+
+                    </button>
+
+                </li>
+
             </ul>
 
         </div>
@@ -224,5 +371,6 @@ function Sidebar({ open, setOpen }) {
     );
 
 }
+
 
 export default Sidebar;

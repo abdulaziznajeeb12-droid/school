@@ -13,36 +13,34 @@ import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 
-import { getClasses } from "../../services/classService";
-
 import {
-    getSections,
-    deleteSection,
-    searchSection
-} from "../../services/sectionService";
+    getMarks,
+    deleteMark
+} from "../../services/marksService";
 
-function SectionList() {
+function MarksList() {
 
-    const [sections, setSections] = useState([]);
-    const [classes, setClasses] = useState([]);
+    const [marks, setMarks] = useState([]);
     const [search, setSearch] = useState("");
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
-        loadData();
+        loadMarks();
     }, []);
 
-    const loadData = async () => {
+    const loadMarks = async () => {
 
         try {
 
-            const sectionData = await getSections();
-            const classData = await getClasses();
+            const data = await getMarks();
 
-            setSections(sectionData);
-            setClasses(classData);
+            setMarks(
+                Array.isArray(data)
+                    ? data
+                    : []
+            );
 
         } catch (error) {
 
@@ -52,62 +50,75 @@ function SectionList() {
 
     };
 
-    const handleSearch = async () => {
+    const filteredMarks = marks.filter((item) => {
 
-        try {
+        const value = search.toLowerCase();
 
-            const data = await searchSection(search);
+        return (
+            String(item.marksId || "")
+                .toLowerCase()
+                .includes(value) ||
 
-            setSections(data);
+            String(item.examName || "")
+                .toLowerCase()
+                .includes(value) ||
 
-        } catch (error) {
+            String(item.subjectName || "")
+                .toLowerCase()
+                .includes(value) ||
 
-            console.log(error);
+            String(item.studentName || "")
+                .toLowerCase()
+                .includes(value) ||
 
-        }
+            String(item.obtainedMarks ?? "")
+                .toLowerCase()
+                .includes(value) ||
 
-    };
+            String(item.grade || "")
+                .toLowerCase()
+                .includes(value)
+        );
+
+    });
 
     useEffect(() => {
-
-        const delay = setTimeout(() => {
-
-            if (search.trim() === "") {
-
-                loadData();
-
-                return;
-
-            }
-
-            handleSearch();
-
-        }, 300);
-
-        return () => clearTimeout(delay);
+        setPage(0);
     }, [search]);
+
     const handleDelete = async (id) => {
-        if (!window.confirm("Delete this Section?"))
+
+        if (!window.confirm("Delete these marks?"))
             return;
+
         try {
-            await deleteSection(id);
-            loadData();
+
+            await deleteMark(id);
+
+            loadMarks();
+
         } catch (error) {
+
             console.log(error);
-            alert("Delete Failed");
+
+            alert(
+                error.response?.data?.message ||
+                "Delete Failed"
+            );
 
         }
+
     };
 
     const handleChangePage = (event, newPage) => {
-
         setPage(newPage);
-
     };
 
     const handleChangeRowsPerPage = (event) => {
 
-        setRowsPerPage(parseInt(event.target.value, 10));
+        setRowsPerPage(
+            parseInt(event.target.value, 10)
+        );
 
         setPage(0);
 
@@ -120,9 +131,7 @@ function SectionList() {
             <div className="page-header">
 
                 <h2 className="main-heading">
-
-                    Section Management
-
+                    Marks Management
                 </h2>
 
                 <div className="toolbar">
@@ -130,17 +139,17 @@ function SectionList() {
                     <input
                         className="searchbox"
                         type="text"
-                        placeholder="Search Section..."
+                        placeholder="Search Marks..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) =>
+                            setSearch(e.target.value)
+                        }
                     />
 
-                    <Link to="/sections/add">
+                    <Link to="/marks/add">
 
                         <button className="add-btn">
-
-                            + Add Section
-
+                            + Add Marks
                         </button>
 
                     </Link>
@@ -161,24 +170,36 @@ function SectionList() {
 
                         <TableRow className="table-header">
 
-                            <TableCell>ID</TableCell>
+                            <TableCell>
+                                ID
+                            </TableCell>
 
-                            <TableCell>Class Name</TableCell>
+                            <TableCell>
+                                Exam
+                            </TableCell>
 
-                            <TableCell>Section</TableCell>
+                            <TableCell>
+                                Subject
+                            </TableCell>
 
-                            <TableCell>Teacher ID</TableCell>
+                            <TableCell>
+                                Student
+                            </TableCell>
 
-                            <TableCell>Room No</TableCell>
+                            <TableCell>
+                                Obtained
+                            </TableCell>
 
-                            <TableCell>Capacity</TableCell>
+                            <TableCell>
+                                Grade
+                            </TableCell>
 
-                            <TableCell>Assign Student</TableCell>
+                            <TableCell>
+                                Remarks
+                            </TableCell>
 
                             <TableCell align="center">
-
                                 Actions
-
                             </TableCell>
 
                         </TableRow>
@@ -188,85 +209,69 @@ function SectionList() {
                     <TableBody>
 
                         {(rowsPerPage > 0
-                            ? sections.slice(
+                            ? filteredMarks.slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
                             )
-                            : sections
+                            : filteredMarks
                         ).map((item) => (
 
                             <TableRow
-                                key={item.sectionId}
+                                key={item.marksId}
                                 hover
                                 className="table-body-row"
                             >
 
                                 <TableCell>
-
-                                    {item.sectionId}
-
+                                    {item.marksId}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {classes.find(
-                                        x => x.id === item.classId
-                                    )?.className || "N/A"}
-
+                                    {item.examName || "-"}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {item.sectionName}
-
+                                    {item.subjectName || "-"}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {item.sectionTeacherId}
-                                        <span> </span>
-                                    {item.teacherlastname}
-
+                                    {item.studentName || "-"}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {item.roomNo}
-
+                                    {item.obtainedMarks ?? "-"}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {item.capacity}
-
+                                    {item.grade || "-"}
                                 </TableCell>
 
                                 <TableCell>
-                                    {item.countStudent}
+                                    {item.remarks || "-"}
                                 </TableCell>
 
                                 <TableCell align="center">
 
                                     <Link
-                                        to={`/sections/edit/${item.sectionId}`}
+                                        to={`/marks/edit/${item.marksId}`}
                                     >
 
                                         <button className="edit-btn">
-
                                             Edit
-
                                         </button>
 
                                     </Link>
 
-                                    {/* <button
+                                    <button
                                         className="delete-btn"
-                                        onClick={() => handleDelete(item.sectionId)}
+                                        onClick={() =>
+                                            handleDelete(
+                                                item.marksId
+                                            )
+                                        }
                                     >
-
                                         Delete
-
-                                    </button> */}
+                                    </button>
 
                                 </TableCell>
 
@@ -281,12 +286,20 @@ function SectionList() {
                         <TableRow>
 
                             <TablePagination
-                                rowsPerPageOptions={[5, 10, 25]}
-                                count={sections.length}
+                                rowsPerPageOptions={[
+                                    5,
+                                    10,
+                                    25
+                                ]}
+                                count={filteredMarks.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                onPageChange={
+                                    handleChangePage
+                                }
+                                onRowsPerPageChange={
+                                    handleChangeRowsPerPage
+                                }
                             />
 
                         </TableRow>
@@ -303,4 +316,4 @@ function SectionList() {
 
 }
 
-export default SectionList;
+export default MarksList;

@@ -1,9 +1,9 @@
 import api from "../api/axios";
 
 
-// =====================================================
+// ======================================================
 // GET ALL
-// =====================================================
+// ======================================================
 
 export const getTeacherSubjects = async () => {
 
@@ -15,32 +15,28 @@ export const getTeacherSubjects = async () => {
 };
 
 
-// =====================================================
-// GET SELECTED SUBJECT IDS
-// =====================================================
+// ======================================================
+// GET BY ID
+// ======================================================
 
-export const getAssignedSubjects = async (
-    teacherId,
-    classId,
-    sectionId
-) => {
+export const getTeacherSubjectById = async (id) => {
 
     const response = await api.get(
-        `/TeacherSubject/GetTeacherSubjects?teacherId=${teacherId}&classId=${classId}&sectionId=${sectionId}`
+        `/TeacherSubject/GetTeacherSubjectById/${Number(id)}`
     );
 
     return response.data;
 };
 
 
-// =====================================================
+// ======================================================
 // ADD
-// =====================================================
+// ======================================================
 
-export const addTeacherSubjects = async (data) => {
+export const addTeacherSubject = async (data) => {
 
     const response = await api.post(
-        "/TeacherSubject/AddTeacherSubjects",
+        "/TeacherSubject/AddTeacherSubject",
         data
     );
 
@@ -48,14 +44,15 @@ export const addTeacherSubjects = async (data) => {
 };
 
 
-// =====================================================
-// UPDATE
-// =====================================================
 
-export const updateTeacherSubjects = async (data) => {
+// ======================================================
+// UPDATE
+// ======================================================
+
+export const updateTeacherSubject = async (data) => {
 
     const response = await api.put(
-        "/TeacherSubject/UpdateTeacherSubjects",
+        `/TeacherSubject/UpdateTeacherSubject/${data.teacherSubjectId}`,
         data
     );
 
@@ -63,27 +60,37 @@ export const updateTeacherSubjects = async (data) => {
 };
 
 
-// =====================================================
+// ======================================================
 // DELETE
-// =====================================================
+// ======================================================
 
-export const deleteTeacherSubjects = async (
-    teacherId,
-    classId,
-    sectionId
-) => {
+export const deleteTeacherSubject = async (id) => {
 
     const response = await api.delete(
-        `/TeacherSubject/DeleteTeacherSubjects?teacherId=${teacherId}&classId=${classId}&sectionId=${sectionId}`
+        `/TeacherSubject/DeleteTeacherSubject/${Number(id)}`
     );
 
     return response.data;
 };
 
 
-// =====================================================
-// TEACHERS
-// =====================================================
+// ======================================================
+// GET TEACHERS
+// ======================================================
+
+export const getTeachers = async () => {
+
+    const response = await api.get(
+        "/TeacherSubject/GetTeachers"
+    );
+
+    return response.data;
+};
+
+
+// ======================================================
+// GET TEACHER USERS
+// ======================================================
 
 export const getTeacherUsers = async () => {
 
@@ -95,9 +102,9 @@ export const getTeacherUsers = async () => {
 };
 
 
-// =====================================================
-// CLASSES
-// =====================================================
+// ======================================================
+// GET CLASSES
+// ======================================================
 
 export const getTeacherClasses = async () => {
 
@@ -109,23 +116,37 @@ export const getTeacherClasses = async () => {
 };
 
 
-// =====================================================
-// SECTIONS
-// =====================================================
+// ======================================================
+// GET SECTIONS
+// ======================================================
 
 export const getTeacherSections = async (classId) => {
 
     const response = await api.get(
-        `/TeacherSubject/GetSectionsByClass?classId=${classId}`
+        `/TeacherSubject/GetSections/${Number(classId)}`
     );
 
     return response.data;
 };
 
 
-// =====================================================
-// SUBJECTS
-// =====================================================
+// ======================================================
+// GET SUBJECTS
+// ======================================================
+
+export const getTeacherSubjectsList = async () => {
+
+    const response = await api.get(
+        "/TeacherSubject/GetSubjects"
+    );
+
+    return response.data;
+};
+
+
+// ======================================================
+// SUBJECT DROPDOWN
+// ======================================================
 
 export const getTeacherSubjectsDropdown = async () => {
 

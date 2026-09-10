@@ -9,11 +9,9 @@ import {
     FormControl,
     InputLabel,
     MenuItem,
-    OutlinedInput,
     Paper,
     Select,
-    Checkbox,
-    ListItemText,
+    TextField,
     Typography,
     Snackbar,
     Alert
@@ -23,7 +21,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import {
-    addTeacherSubjects,
+    addTeacherSubject,
     getTeacherUsers,
     getTeacherClasses,
     getTeacherSections,
@@ -32,49 +30,38 @@ import {
 
 import "../../assets/teacherSubjectForm.css";
 
-
 function AddTeacherSubject() {
 
     const navigate = useNavigate();
 
-
     const [teachers, setTeachers] = useState([]);
-
     const [classes, setClasses] = useState([]);
-
     const [sections, setSections] = useState([]);
-
     const [subjects, setSubjects] = useState([]);
-
-
+    const [dayOfWeek, setDayOfWeek] = useState("");
     const [teacherId, setTeacherId] = useState("");
-
     const [classId, setClassId] = useState("");
-
     const [sectionId, setSectionId] = useState("");
+    const [subjectId, setSubjectId] = useState("");
 
-    const [subjectIds, setSubjectIds] = useState([]);
-
+    // NEW
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
 
     const [loading, setLoading] = useState(false);
 
     const [open, setOpen] = useState(false);
 
     const [errorOpen, setErrorOpen] = useState(false);
-
     const [errorMessage, setErrorMessage] = useState("");
-
 
     // =====================================================
     // LOAD DROPDOWNS
     // =====================================================
 
     useEffect(() => {
-
         loadDropdowns();
-
     }, []);
-
 
     const loadDropdowns = async () => {
 
@@ -85,33 +72,42 @@ function AddTeacherSubject() {
                 classData,
                 subjectData
             ] = await Promise.all([
-
                 getTeacherUsers(),
-
                 getTeacherClasses(),
-
                 getTeacherSubjectsDropdown()
-
             ]);
 
+            setTeachers(
+                Array.isArray(teacherData)
+                    ? teacherData
+                    : teacherData?.data || []
+            );
 
-            setTeachers(teacherData);
+            setClasses(
+                Array.isArray(classData)
+                    ? classData
+                    : classData?.data || []
+            );
 
-            setClasses(classData);
-
-            setSubjects(subjectData);
+            setSubjects(
+                Array.isArray(subjectData)
+                    ? subjectData
+                    : subjectData?.data || []
+            );
 
         }
         catch (error) {
 
             console.log(error);
 
-            showError("Unable to load dropdown data.");
+            showError(
+                error.response?.data?.message ||
+                "Unable to load dropdown data."
+            );
 
         }
 
     };
-
 
     // =====================================================
     // CLASS CHANGE
@@ -123,78 +119,65 @@ function AddTeacherSubject() {
 
         setClassId(value);
 
+        // Class change hone par section reset
         setSectionId("");
-
         setSections([]);
 
-
         if (!value) {
-
             return;
-
         }
-
 
         try {
 
-            const data = await getTeacherSections(value);
+            const data =
+                await getTeacherSections(Number(value));
 
-            setSections(data);
+            console.log("Sections Response:", data);
+
+            const sectionData =
+                Array.isArray(data)
+                    ? data
+                    : Array.isArray(data?.data)
+                        ? data.data
+                        : [];
+
+            setSections(sectionData);
 
         }
         catch (error) {
 
-            console.log(error);
+            console.log(
+                "Section Loading Error:",
+                error.response?.data || error
+            );
 
-            showError("Unable to load sections.");
+            showError(
+                error.response?.data?.message ||
+                "Unable to load sections."
+            );
 
         }
 
     };
 
-
     // =====================================================
-    // SUBJECT MULTI SELECT
-    // =====================================================
-
-    const handleSubjectsChange = (e) => {
-
-        const value = e.target.value;
-
-        setSubjectIds(
-
-            typeof value === "string"
-
-                ? value.split(",")
-
-                : value
-
-        );
-
-    };
-
-
-    // =====================================================
-    // SNACKBAR
+    // ERROR
     // =====================================================
 
     const showError = (message) => {
 
-        setErrorMessage(message);
+        if (typeof message === "object") {
 
+            message =
+                message?.message ||
+                "Something went wrong.";
+
+        }
+
+        setErrorMessage(message);
         setErrorOpen(true);
 
     };
-
-
-    const handleClose = () => {
-
-        setOpen(false);
-
-        setErrorOpen(false);
-
-    };
-
 
     // =====================================================
     // SAVE
@@ -204,49 +187,61 @@ function AddTeacherSubject() {
 
         e.preventDefault();
 
+        // =================================================
+        // VALIDATION
+        // =================================================
+        if (!dayOfWeek) {
+    showError("Please select Day.");
+    return;
+} 
 
         if (!teacherId) {
-
             showError("Please select Teacher.");
-
             return;
-
         }
-
 
         if (!classId) {
-
             showError("Please select Class.");
-
             return;
-
         }
-
 
         if (!sectionId) {
-
             showError("Please select Section.");
-
             return;
-
         }
 
-
-        if (subjectIds.length === 0) {
-
-            showError("Please select at least one Subject.");
-
+        if (!subjectId) {
+            showError("Please select Subject.");
             return;
-
         }
 
+        if (!startTime) {
+            showError("Please select Start Time.");
+            return;
+        }
+
+        if (!endTime) {
+            showError("Please select End Time.");
+            return;
+        }
+
+        // End time must be greater than start time
+        if (endTime <= startTime) {
+            showError(
+                "End Time must be greater than Start Time."
+            );
+            return;
+        }
 
         try {
 
             setLoading(true);
 
+            // =================================================
+            // API CALL
+            // =================================================
 
-            await addTeacherSubjects({
+            await addTeacherSubject({
 
                 teacherId: Number(teacherId),
 
@@ -254,33 +249,46 @@ function AddTeacherSubject() {
 
                 sectionId: Number(sectionId),
 
-                subjectIds: subjectIds.map(
-                    id => Number(id)
-                )
+                subjectId: Number(subjectId),
+
+                    dayOfWeek: dayOfWeek,
+
+                // IMPORTANT:
+                // TimeOnly ke liye HH:mm:ss bhej rahe hain
+                startTime: `${startTime}:00`,
+
+                endTime: `${endTime}:00`
 
             });
 
+            // =================================================
+            // SUCCESS
+            // =================================================
 
             setOpen(true);
 
-
             setTimeout(() => {
 
-                navigate("/teacher-subjects");
+                navigate("/teachersubject");
 
-            }, 1500);
+            }, 1200);
 
         }
         catch (error) {
 
-            console.log(error);
-
-            showError(
-
-                error.response?.data ||
-                "Unable to assign subjects."
-
+            console.log(
+                "Add Teacher Subject Error:",
+                error
             );
+
+            const message =
+                error.response?.data?.message ||
+                error.response?.data?.errors?.startTime?.[0] ||
+                error.response?.data?.errors?.endTime?.[0] ||
+                error.response?.data ||
+                "Unable to assign subject.";
+
+            showError(message);
 
         }
         finally {
@@ -291,6 +299,9 @@ function AddTeacherSubject() {
 
     };
 
+    // =====================================================
+    // UI
+    // =====================================================
 
     return (
 
@@ -305,15 +316,13 @@ function AddTeacherSubject() {
                     variant="h4"
                     className="teacher-subject-form-title"
                 >
-                    Assign Subjects
+                    Assign Subject
                 </Typography>
-
 
                 <Typography
                     className="teacher-subject-form-subtitle"
                 >
-                    Assign multiple subjects to a teacher
-                </Typography>
+Assign a subject to a teacher with day and time                </Typography>
 
 
                 <Box
@@ -322,10 +331,14 @@ function AddTeacherSubject() {
                     className="teacher-subject-form-container"
                 >
 
+                    {/* =====================================
+                        TEACHER
+                    ===================================== */}
 
-                    {/* TEACHER */}
-
-                    <FormControl fullWidth required>
+                    <FormControl
+                        fullWidth
+                        required
+                    >
 
                         <InputLabel>
                             Teacher
@@ -359,9 +372,14 @@ function AddTeacherSubject() {
                     </FormControl>
 
 
-                    {/* CLASS */}
+                    {/* =====================================
+                        CLASS
+                    ===================================== */}
 
-                    <FormControl fullWidth required>
+                    <FormControl
+                        fullWidth
+                        required
+                    >
 
                         <InputLabel>
                             Class
@@ -393,7 +411,9 @@ function AddTeacherSubject() {
                     </FormControl>
 
 
-                    {/* SECTION */}
+                    {/* =====================================
+                        SECTION
+                    ===================================== */}
 
                     <FormControl
                         fullWidth
@@ -420,10 +440,18 @@ function AddTeacherSubject() {
                             {sections.map((item) => (
 
                                 <MenuItem
-                                    key={item.sectionId}
-                                    value={item.sectionId}
+                                    key={
+                                        item.sectionId ??
+                                        item.id
+                                    }
+                                    value={
+                                        item.sectionId ??
+                                        item.id
+                                    }
                                 >
+
                                     {item.sectionName}
+
                                 </MenuItem>
 
                             ))}
@@ -433,69 +461,39 @@ function AddTeacherSubject() {
                     </FormControl>
 
 
-                    {/* SUBJECT MULTI SELECT */}
+                    {/* =====================================
+                        SUBJECT
+                    ===================================== */}
 
-                    <FormControl fullWidth required>
+                    <FormControl
+                        fullWidth
+                        required
+                    >
 
                         <InputLabel>
-                            Subjects
+                            Subject
                         </InputLabel>
 
                         <Select
-
-                            multiple
-
-                            value={subjectIds}
-
-                            onChange={handleSubjectsChange}
-
-                            input={
-                                <OutlinedInput
-                                    label="Subjects"
-                                />
+                            value={subjectId}
+                            label="Subject"
+                            onChange={(e) =>
+                                setSubjectId(e.target.value)
                             }
-
-                            renderValue={(selected) => {
-
-                                const names = subjects
-
-                                    .filter(subject =>
-                                        selected.includes(
-                                            String(subject.id)
-                                        )
-                                    )
-
-                                    .map(
-                                        subject =>
-                                            subject.subjectName
-                                    );
-
-                                return names.join(", ");
-
-                            }}
-
                         >
+
+                            <MenuItem value="">
+                                <em>Select Subject</em>
+                            </MenuItem>
 
                             {subjects.map((subject) => (
 
                                 <MenuItem
                                     key={subject.id}
-                                    value={String(subject.id)}
+                                    value={subject.id}
                                 >
 
-                                    <Checkbox
-                                        checked={
-                                            subjectIds.indexOf(
-                                                String(subject.id)
-                                            ) > -1
-                                        }
-                                    />
-
-                                    <ListItemText
-                                        primary={
-                                            subject.subjectName
-                                        }
-                                    />
+                                    {subject.subjectName}
 
                                 </MenuItem>
 
@@ -505,10 +503,112 @@ function AddTeacherSubject() {
 
                     </FormControl>
 
+                            <FormControl
+    fullWidth
+    required
+>
+    <InputLabel>
+        Day
+    </InputLabel>
 
-                    {/* BUTTONS */}
+    <Select
+        value={dayOfWeek}
+        label="Day"
+        onChange={(e) =>
+            setDayOfWeek(e.target.value)
+        }
+    >
+        <MenuItem value="">
+            <em>Select Day</em>
+        </MenuItem>
 
-                    <Box className="teacher-subject-form-buttons">
+        <MenuItem value="Monday">
+            Monday
+        </MenuItem>
+
+        <MenuItem value="Tuesday">
+            Tuesday
+        </MenuItem>
+
+        <MenuItem value="Wednesday">
+            Wednesday
+        </MenuItem>
+
+        <MenuItem value="Thursday">
+            Thursday
+        </MenuItem>
+
+        <MenuItem value="Friday">
+            Friday
+        </MenuItem>
+
+        <MenuItem value="Saturday">
+            Saturday
+        </MenuItem>
+
+        <MenuItem value="Sunday">
+            Sunday
+        </MenuItem>
+    </Select>
+</FormControl>
+                    {/* =====================================
+                        START + END TIME
+                    ===================================== */}
+
+                    <Box
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: {
+                                xs: "1fr",
+                                sm: "1fr 1fr"
+                            },
+                            gap: 2
+                        }}
+                    >
+
+                        {/* START TIME */}
+
+                        <TextField
+                            fullWidth
+                            required
+                            label="Start Time"
+                            type="time"
+                            value={startTime}
+                            onChange={(e) =>
+                                setStartTime(e.target.value)
+                            }
+                            InputLabelProps={{
+                                shrink: true
+                            }}
+                        />
+
+
+                        {/* END TIME */}
+
+                        <TextField
+                            fullWidth
+                            required
+                            label="End Time"
+                            type="time"
+                            value={endTime}
+                            onChange={(e) =>
+                                setEndTime(e.target.value)
+                            }
+                            InputLabelProps={{
+                                shrink: true
+                            }}
+                        />
+
+                    </Box>
+
+
+                    {/* =====================================
+                        BUTTONS
+                    ===================================== */}
+
+                    <Box
+                        className="teacher-subject-form-buttons"
+                    >
 
                         <Button
                             type="button"
@@ -531,7 +631,7 @@ function AddTeacherSubject() {
 
                             {loading
                                 ? "Saving..."
-                                : "Assign Subjects"
+                                : "Assign Subject"
                             }
 
                         </Button>
@@ -543,12 +643,14 @@ function AddTeacherSubject() {
             </Paper>
 
 
-            {/* SUCCESS */}
+            {/* ==========================================
+                SUCCESS
+            ========================================== */}
 
             <Snackbar
                 open={open}
                 autoHideDuration={3000}
-                onClose={handleClose}
+                onClose={() => setOpen(false)}
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right"
@@ -556,22 +658,23 @@ function AddTeacherSubject() {
             >
 
                 <Alert
-                    onClose={handleClose}
                     severity="success"
                     variant="filled"
                 >
-                    Subjects Assigned Successfully!
+                    Subject Assigned Successfully!
                 </Alert>
 
             </Snackbar>
 
 
-            {/* ERROR */}
+            {/* ==========================================
+                ERROR
+            ========================================== */}
 
             <Snackbar
                 open={errorOpen}
-                autoHideDuration={4000}
-                onClose={handleClose}
+                autoHideDuration={5000}
+                onClose={() => setErrorOpen(false)}
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right"
@@ -579,9 +682,11 @@ function AddTeacherSubject() {
             >
 
                 <Alert
-                    onClose={handleClose}
                     severity="error"
                     variant="filled"
+                    onClose={() =>
+                        setErrorOpen(false)
+                    }
                 >
                     {errorMessage}
                 </Alert>
@@ -591,6 +696,7 @@ function AddTeacherSubject() {
         </DashboardLayout>
 
     );
+
 }
 
 export default AddTeacherSubject;

@@ -312,3 +312,67 @@ background:#0f3051;
 background:#1976d2;
 
 }
+
+.user-action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.view-btn,
+.edit-btn {
+    width: 32px;
+    height: 28px;
+    min-width: 32px;
+    padding: 0 5px;
+    margin: 0;
+    border: none;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.view-btn {
+    background: #1976d2;
+    color: white;
+}
+
+.edit-btn {
+    background: #ed6c02;
+    color: white;
+}
+
+.view-btn:hover {
+    opacity: 0.85;
+}
+
+.edit-btn:hover {
+    opacity: 0.85;
+}
+
+.user-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.user-status.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.user-status.inactive {
+    background: #ffebee;
+    color: #c62828;
+}

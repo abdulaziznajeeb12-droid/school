@@ -23,8 +23,7 @@ import {
     MenuItem,
     Box,
     Snackbar,
-    Alert,
-    Autocomplete
+    Alert
 } from "@mui/material";
 
 import {
@@ -35,6 +34,8 @@ import {
 } from "../../services/studentClassService";
 
 import { getClasses } from "../../services/classService";
+
+import "../../assets/studentClass.css";
 
 
 function AddStudentClass() {
@@ -82,9 +83,13 @@ function AddStudentClass() {
     // ==========================================
 
     const [snackbar, setSnackbar] = useState({
+
         open: false,
+
         message: "",
+
         severity: "success"
+
     });
 
 
@@ -107,7 +112,8 @@ function AddStudentClass() {
 
             setClasses(data);
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(error);
 
@@ -130,11 +136,14 @@ function AddStudentClass() {
         const selectedClassId =
             e.target.value;
 
+
         setClassId(selectedClassId);
 
-        // reset dependent fields
+
+        // Reset dependent fields
 
         setBranchId("");
+
         setBranchName("");
 
         setSectionId("");
@@ -147,13 +156,17 @@ function AddStudentClass() {
 
 
         if (!selectedClassId) {
+
             return;
+
         }
 
 
         try {
 
-            // Fetch Branch
+            // ==================================
+            // GET BRANCH
+            // ==================================
 
             const branch =
                 await getBranchByClassId(
@@ -165,12 +178,15 @@ function AddStudentClass() {
                 branch.branchId
             );
 
+
             setBranchName(
                 branch.branchName
             );
 
 
-            // Fetch Sections
+            // ==================================
+            // GET SECTIONS
+            // ==================================
 
             const sectionData =
                 await getSectionsByClassId(
@@ -178,9 +194,12 @@ function AddStudentClass() {
                 );
 
 
-            setSections(sectionData);
+            setSections(
+                sectionData
+            );
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(error);
 
@@ -203,17 +222,26 @@ function AddStudentClass() {
         const selectedSectionId =
             e.target.value;
 
+
         setSectionId(
             selectedSectionId
         );
+
+
+        // Reset students
 
         setStudents([]);
 
         setStudentIds([]);
 
 
-        if (!selectedSectionId || !classId) {
+        if (
+            !selectedSectionId ||
+            !classId
+        ) {
+
             return;
+
         }
 
 
@@ -226,9 +254,12 @@ function AddStudentClass() {
                 );
 
 
-            setStudents(data);
+            setStudents(
+                data
+            );
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(error);
 
@@ -238,6 +269,24 @@ function AddStudentClass() {
             );
 
         }
+
+    };
+
+
+    // ==========================================
+    // STUDENT CHANGE
+    // ==========================================
+
+    const handleStudentChange = (e) => {
+
+        const value = e.target.value;
+
+
+        setStudentIds(
+            typeof value === "string"
+                ? value.split(",")
+                : value
+        );
 
     };
 
@@ -291,18 +340,22 @@ function AddStudentClass() {
 
             await addStudentClass({
 
-                classId: Number(classId),
+                classId:
+                    Number(classId),
 
-                sectionId: Number(sectionId),
+                sectionId:
+                    Number(sectionId),
 
-                studentIds: studentIds.map(
-                    (id) => Number(id)
-                ),
+                studentIds:
+                    studentIds.map(
+                        (id) => Number(id)
+                    ),
 
                 admissionDate:
                     admissionDate || null,
 
-                isActive
+                isActive:
+                    isActive
 
             });
 
@@ -315,18 +368,23 @@ function AddStudentClass() {
 
             setTimeout(() => {
 
-                navigate("/studentclasses");
+                navigate(
+                    "/studentclasses"
+                );
 
             }, 1500);
 
-
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(error);
 
+
             const message =
                 error.response?.data?.message ||
+                error.response?.data ||
                 "Failed to assign students.";
+
 
             showSnackbar(
                 message,
@@ -348,9 +406,13 @@ function AddStudentClass() {
     ) => {
 
         setSnackbar({
+
             open: true,
+
             message,
+
             severity
+
         });
 
     };
@@ -361,30 +423,29 @@ function AddStudentClass() {
         reason
     ) => {
 
-        if (reason === "clickaway") {
+        if (
+            reason === "clickaway"
+        ) {
+
             return;
+
         }
 
+
         setSnackbar({
+
             ...snackbar,
+
             open: false
+
         });
 
     };
 
 
     // ==========================================
-    // SELECTED STUDENT OBJECTS
+    // UI
     // ==========================================
-
-    const selectedStudents =
-        students.filter(
-            (student) =>
-                studentIds.includes(
-                    student.id
-                )
-        );
-
 
     return (
 
@@ -448,9 +509,11 @@ function AddStudentClass() {
                         >
 
                             <MenuItem value="">
+
                                 <em>
                                     Select Class
                                 </em>
+
                             </MenuItem>
 
 
@@ -462,7 +525,9 @@ function AddStudentClass() {
                                         value={item.id}
                                     >
 
-                                        {item.className}
+                                        {
+                                            item.className
+                                        }
 
                                     </MenuItem>
 
@@ -517,9 +582,11 @@ function AddStudentClass() {
                         >
 
                             <MenuItem value="">
+
                                 <em>
                                     Select Section
                                 </em>
+
                             </MenuItem>
 
 
@@ -550,61 +617,89 @@ function AddStudentClass() {
 
 
                     {/* ================================= */}
-                    {/* MULTIPLE STUDENTS */}
+                    {/* STUDENTS */}
                     {/* ================================= */}
 
-                    <Autocomplete
-                        multiple
+                    <FormControl
                         fullWidth
-                        disabled={
-                            !classId ||
-                            !sectionId
-                        }
-                        options={students}
-                        value={selectedStudents}
-                        onChange={(
-                            event,
-                            newValue
-                        ) => {
+                        required
+                        disabled={!sectionId}
+                    >
 
-                            setStudentIds(
-                                newValue.map(
-                                    (student) =>
-                                        student.id
+                        <InputLabel>
+                            Students
+                        </InputLabel>
+
+
+                        <Select
+                            multiple
+                            value={studentIds}
+                            label="Students"
+                            onChange={
+                                handleStudentChange
+                            }
+                            renderValue={(selected) => {
+
+                                return students
+                                    .filter(
+                                        (student) =>
+                                            selected.includes(
+                                                student.id
+                                            )
+                                    )
+                                    .map(
+                                        (student) =>
+                                            student.studentName
+                                    )
+                                    .join(", ");
+
+                            }}
+                        >
+
+                            {students.length === 0 ? (
+
+                                <MenuItem disabled>
+
+                                    No students available
+
+                                </MenuItem>
+
+                            ) : (
+
+                                students.map(
+                                    (student) => (
+
+                                        <MenuItem
+                                            key={
+                                                student.id
+                                            }
+                                            value={
+                                                student.id
+                                            }
+                                        >
+
+                                            <Checkbox
+                                                checked={
+                                                    studentIds.includes(
+                                                        student.id
+                                                    )
+                                                }
+                                            />
+
+                                            {
+                                                student.studentName
+                                            }
+
+                                        </MenuItem>
+
+                                    )
                                 )
-                            );
 
-                        }}
-                        getOptionLabel={(
-                            option
-                        ) =>
-                            option.studentName
-                        }
-                        isOptionEqualToValue={(
-                            option,
-                            value
-                        ) =>
-                            option.id === value.id
-                        }
-                        renderInput={(
-                            params
-                        ) => (
+                            )}
 
-                            <TextField
-                                {...params}
-                                label="Students"
-                                placeholder={
-                                    sectionId
-                                        ? "Select students..."
-                                        : "Select section first"
-                                }
-                                required={
-                                    studentIds.length === 0
-                                }
-                            />
+                        </Select>
 
-                        )}
-                    />
+                    </FormControl>
 
 
                     {/* ================================= */}
@@ -652,34 +747,40 @@ function AddStudentClass() {
 
 
                     {/* ================================= */}
-                    {/* BUTTON */}
+                    {/* BUTTONS */}
                     {/* ================================= */}
 
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        size="large"
+                    <Box
+                        className="form-buttons"
                     >
 
-                        Assign Students
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            size="large"
+                        >
 
-                    </Button>
+                            Assign Students
+
+                        </Button>
 
 
-                    <Button
-                        type="button"
-                        variant="outlined"
-                        size="large"
-                        onClick={() =>
-                            navigate(
-                                "/student-class"
-                            )
-                        }
-                    >
+                        <Button
+                            type="button"
+                            variant="outlined"
+                            size="large"
+                            onClick={() =>
+                                navigate(
+                                    "/studentclasses"
+                                )
+                            }
+                        >
 
-                        Cancel
+                            Cancel
 
-                    </Button>
+                        </Button>
+
+                    </Box>
 
                 </Box>
 

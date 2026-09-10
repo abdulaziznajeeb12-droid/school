@@ -1,0 +1,43 @@
+.view-user-container {
+    padding: 20px;
+}
+
+.view-user-title {
+    margin-bottom: 20px;
+}
+
+.view-user-profile-image {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #eee;
+}
+
+.view-user-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.view-user-table {
+    width: 100%;
+}
+
+.view-user-table td:first-child {
+    width: 220px;
+    font-weight: 600;
+}
+
+.view-user-table td {
+    padding: 14px 18px;
+}
+
+.view-user-back-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}

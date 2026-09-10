@@ -163,22 +163,25 @@ font-size:16px;
 
 }
 
-.edit-btn{
+.view-btn,
+.edit-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0;
+    margin: 0 3px;
+    border: none;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 
-background:#052e57 !important;
-
-color:white;
-
-border:none;
-
-padding:7px 14px;
-
-border-radius:6px;
-
-margin-right:8px;
-
-cursor:pointer;
-
+.view-btn svg,
+.edit-btn svg {
+    font-size: 18px;
 }
 
 .edit-btn:hover{

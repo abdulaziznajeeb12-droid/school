@@ -1,70 +1,67 @@
 import api from "../api/axios";
 
-// ===============================
+
+// ======================================================
 // GET CLASSES
-// ===============================
+// ======================================================
+
 export const getAttendanceClasses = async () => {
+
     const response = await api.get(
         "/Attendance/GetClasses"
     );
-
-    console.log("Classes:", response.data);
 
     return response.data;
 };
 
 
-// ===============================
-// GET SECTIONS
-// ===============================
+// ======================================================
+// GET SECTIONS BY CLASS
+// ======================================================
+
 export const getAttendanceSections = async (classId) => {
 
     const response = await api.get(
         `/Attendance/GetSectionsByClass?classId=${classId}`
     );
 
-    console.log("Sections:", response.data);
-
     return response.data;
 };
 
 
-// ===============================
+// ======================================================
 // GET SUBJECTS
-// ===============================
+// ======================================================
+
 export const getAttendanceSubjects = async () => {
 
     const response = await api.get(
         "/Attendance/GetSubjects"
     );
 
-    console.log("Subjects:", response.data);
-
     return response.data;
 };
 
 
-// ===============================
-// GET STUDENTS
-// ===============================
-export const getAttendanceStudents = async (data) => {
+// ======================================================
+// GET STUDENTS FOR MARK ATTENDANCE
+// ======================================================
 
-    console.log("Students request:", data);
+export const getAttendanceStudents = async (data) => {
 
     const response = await api.post(
         "/Attendance/GetAttendanceStudents",
         data
     );
 
-    console.log("Students response:", response.data);
-
     return response.data;
 };
 
 
-// ===============================
+// ======================================================
 // SAVE ATTENDANCE
-// ===============================
+// ======================================================
+
 export const saveAttendance = async (data) => {
 
     const response = await api.post(
@@ -76,9 +73,10 @@ export const saveAttendance = async (data) => {
 };
 
 
-// ===============================
-// UPDATE
-// ===============================
+// ======================================================
+// UPDATE SINGLE ATTENDANCE
+// ======================================================
+
 export const updateAttendance = async (data) => {
 
     const response = await api.put(
@@ -90,13 +88,44 @@ export const updateAttendance = async (data) => {
 };
 
 
-// ===============================
-// DELETE
-// ===============================
+// ======================================================
+// DELETE ATTENDANCE
+// ======================================================
+
 export const deleteAttendance = async (id) => {
 
     const response = await api.delete(
         `/Attendance/DeleteAttendance/${id}`
+    );
+
+    return response.data;
+};
+
+
+// ======================================================
+// GET ATTENDANCE BY SECTION
+// ======================================================
+
+export const getAttendanceBySection = async (sectionId) => {
+
+    const response = await api.get(
+        `/Attendance/GetBySection?sectionId=${sectionId}`
+    );
+
+    return response.data;
+};
+
+
+// ======================================================
+// GET STUDENT ATTENDANCE HISTORY
+// ======================================================
+
+export const getStudentAttendanceHistory = async (
+    studentId
+) => {
+
+    const response = await api.get(
+        `/Attendance/GetStudentHistory?studentId=${studentId}`
     );
 
     return response.data;

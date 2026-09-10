@@ -699,7 +699,7 @@ function EditStudentClass() {
                         size="large"
                         onClick={() =>
                             navigate(
-                                "/student-class"
+                                "/studentclasses"
                             )
                         }
                     >

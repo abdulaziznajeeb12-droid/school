@@ -1,48 +1,117 @@
+
 import api from "../api/axios";
 
-// Get All Users
+
+// ======================================================
+// GET ALL USERS
+// ======================================================
+
 export const getUsers = async () => {
-    const response = await api.get("/Users/GetAllUsers");
+
+    const response =
+        await api.get("/Users/GetAllUsers");
+
     return response.data;
+
 };
 
-// Search User
+
+// ======================================================
+// SEARCH USER
+// ======================================================
+
 export const searchUser = async (keyword) => {
-    const response = await api.post("/Users/SearchUser", {
-        keyword
-    });
+
+    const response =
+        await api.post(
+            "/Users/SearchUser",
+            {
+                keyword
+            }
+        );
 
     return response.data;
+
 };
 
-// Get User By Id
+
+// ======================================================
+// GET USER BY ID
+// ======================================================
+
 export const getUserById = async (id) => {
-    const response = await api.post("/Users/GetIdSection", {
-        id: Number(id)
-    });
+
+    const response =
+        await api.post(
+            "/Users/GetIdUsers",
+            {
+                id: Number(id)
+            }
+        );
 
     return response.data;
+
 };
 
-// Add User
-export const addUser = async (user) => {
-    const response = await api.post("/Users/AddUsers", user);
+
+// ======================================================
+// ADD USER
+// ======================================================
+// IMPORTANT:
+// AddUser now receives FormData
+// because image is being uploaded.
+// ======================================================
+
+export const addUser = async (formData) => {
+
+    const response =
+        await api.post(
+            "/Users/AddUsers",
+            formData
+        );
+
     return response.data;
+
 };
 
-// Update User
-export const updateUser = async (user) => {
-    const response = await api.post("/Users/UpdateUserReq", user);
+
+// ======================================================
+// UPDATE USER
+// ======================================================
+// IMPORTANT:
+// UpdateUser also receives FormData
+// because image can be uploaded.
+// ======================================================
+
+export const updateUser = async (formData) => {
+
+    const response =
+        await api.post(
+            "/Users/UpdateUserReq",
+            formData
+        );
+
     return response.data;
+
 };
 
-// Delete User
+
+// ======================================================
+// DELETE USER
+// ======================================================
+
 export const deleteUser = async (id) => {
-    const response = await api.delete("/Users/DeleteUser", {
-        data: {
-            id: Number(id)
-        }
-    });
+
+    const response =
+        await api.delete(
+            "/Users/DeleteUser",
+            {
+                data: {
+                    id: Number(id)
+                }
+            }
+        );
 
     return response.data;
+
 };

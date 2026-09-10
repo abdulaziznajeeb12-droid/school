@@ -113,3 +113,61 @@ export const deleteStudentFee = async (id) => {
 
     return response.data;
 };
+
+export const getFeeVouchers = async () => {
+    const response = await api.get("/FeeVouchers/GetAllVouchers");
+    return response.data;
+};
+
+export const getFeeVoucherById = async (id) => {
+    const response = await api.get(`/FeeVouchers/GetVoucherById/${id}`);
+    return response.data;
+};
+
+
+export const generateFeeVoucher = async (data) => {
+
+    const response = await api.post(
+        "/FeeVouchers/GenerateVoucher",
+        data
+    );
+
+    return response.data;
+
+};
+
+export const deleteFeeVoucher = async (id) => {
+    const response = await api.delete(
+        `/FeeVouchers/DeleteVoucher/${id}`
+    );
+    return response.data;
+};
+
+export const payFeeVoucher = async (data) => {
+    const response = await api.post(
+        "/FeePayments/PayVoucher",
+        data
+    );
+    return response.data;
+};
+
+export const getFeePayments = async () => {
+    const response = await api.get(
+        "/FeePayments/GetAllPayments"
+    );
+    return response.data;
+};
+
+export const getFeePaymentById = async (id) => {
+    const response = await api.get(
+        `/FeePayments/GetPaymentById/${id}`
+    );
+    return response.data;
+};
+export const getPaymentReceipt = async (id) => {
+    const response = await api.get(
+        `/FeePayments/GetPaymentReceipt/${id}`
+    );
+
+    return response.data;
+};

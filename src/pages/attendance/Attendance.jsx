@@ -1,525 +1,309 @@
 import { useEffect, useState } from "react";
+
 import DashboardLayout from "../../layouts/DashboardLayout";
+
+import {
+    Box,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
+    Snackbar,
+    Alert,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
 
 import {
     getAttendanceClasses,
     getAttendanceSections,
-    getAttendanceSubjects,
     getAttendanceStudents,
     saveAttendance
 } from "../../services/attendanceService";
 
-import "../../assets/attendance.css";
+import "../../assets/markAttendance.css";
 
-function Attendance() {
-
-    // =====================================================
-    // DROPDOWN DATA
-    // =====================================================
-
+const Attendance = () => {
     const [classes, setClasses] = useState([]);
     const [sections, setSections] = useState([]);
-    const [subjects, setSubjects] = useState([]);
-
-
-    // =====================================================
-    // SELECTED FILTERS
-    // =====================================================
 
     const [classId, setClassId] = useState("");
     const [sectionId, setSectionId] = useState("");
-    const [subjectId, setSubjectId] = useState("");
 
     const [date, setDate] = useState(
         new Date().toISOString().split("T")[0]
     );
 
-
-    // =====================================================
-    // STUDENTS
-    // =====================================================
-
     const [students, setStudents] = useState([]);
-
-
-    // =====================================================
-    // ATTENDANCE
-    //
-    // Example:
-    //
-    // {
-    //     10: "Present",
-    //     11: "Absent",
-    //     12: "Half Day"
-    // }
-    // =====================================================
-
     const [attendance, setAttendance] = useState({});
-
-
-    // =====================================================
-    // LOADING
-    // =====================================================
 
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
-
-    // =====================================================
-    // MESSAGE
-    // =====================================================
-
     const [message, setMessage] = useState("");
-    const [messageType, setMessageType] = useState("error");
-
-
-    // =====================================================
-    // LOAD INITIAL DATA
-    // =====================================================
+    const [messageType, setMessageType] = useState("success");
 
     useEffect(() => {
-
         loadClasses();
-        loadSubjects();
-
     }, []);
 
-
-    // =====================================================
-    // ERROR MESSAGE HELPER
-    // =====================================================
-
-    const showMessage = (text, type = "error") => {
-
-        if (typeof text === "object") {
-
-            if (text?.message) {
-                text = text.message;
-            }
-            else if (text?.title) {
-                text = text.title;
-            }
-            else {
-                text = "Something went wrong.";
-            }
-
-        }
-
-        setMessage(String(text));
-        setMessageType(type);
-
-    };
-
-
-    // =====================================================
-    // LOAD CLASSES
-    // =====================================================
-
     const loadClasses = async () => {
-
         try {
-
             const data = await getAttendanceClasses();
-
-            console.log("Classes API:", data);
 
             setClasses(
                 Array.isArray(data)
                     ? data
-                    : []
+                    : data?.records || []
             );
+        } catch (error) {
+            console.error("Error loading classes:", error);
 
+            setMessage("Failed to load classes");
+            setMessageType("error");
         }
-        catch (error) {
-
-            console.error(
-                "Classes Error:",
-                error.response?.data || error
-            );
-
-            showMessage(
-                error.response?.data ||
-                "Unable to load classes."
-            );
-
-        }
-
     };
-
-
-    // =====================================================
-    // LOAD SUBJECTS
-    // =====================================================
-
-    const loadSubjects = async () => {
-
-        try {
-
-            const data = await getAttendanceSubjects();
-
-            console.log("Subjects API:", data);
-
-            setSubjects(
-                Array.isArray(data)
-                    ? data
-                    : []
-            );
-
-        }
-        catch (error) {
-
-            console.error(
-                "Subjects Error:",
-                error.response?.data || error
-            );
-
-            showMessage(
-                error.response?.data ||
-                "Unable to load subjects."
-            );
-
-        }
-
-    };
-
-
-    // =====================================================
-    // CLASS CHANGE
-    // =====================================================
 
     const handleClassChange = async (e) => {
-
         const selectedClassId = e.target.value;
 
         setClassId(selectedClassId);
-
-        // Reset section
         setSectionId("");
         setSections([]);
-
-        // Reset students
         setStudents([]);
-
-        // Reset attendance
         setAttendance({});
-
-        setMessage("");
-
 
         if (!selectedClassId) {
             return;
         }
 
-
         try {
-
             const data = await getAttendanceSections(
                 Number(selectedClassId)
-            );
-
-            console.log(
-                "Sections API:",
-                data
             );
 
             setSections(
                 Array.isArray(data)
                     ? data
-                    : []
+                    : data?.records || []
             );
+        } catch (error) {
+            console.error("Error loading sections:", error);
 
+            setMessage("Failed to load sections");
+            setMessageType("error");
         }
-        catch (error) {
-
-            console.error(
-                "Sections Error:",
-                error.response?.data || error
-            );
-
-            showMessage(
-                error.response?.data ||
-                "Unable to load sections."
-            );
-
-        }
-
     };
 
-
-    // =====================================================
-    // SECTION CHANGE
-    // =====================================================
-
     const handleSectionChange = (e) => {
-
         setSectionId(e.target.value);
 
         setStudents([]);
-
         setAttendance({});
-
-        setMessage("");
-
     };
-
-
-    // =====================================================
-    // SUBJECT CHANGE
-    // =====================================================
-
-    const handleSubjectChange = (e) => {
-
-        setSubjectId(e.target.value);
-
-        setStudents([]);
-
-        setAttendance({});
-
-        setMessage("");
-
-    };
-
-
-    // =====================================================
-    // DATE CHANGE
-    // =====================================================
-
-    const handleDateChange = (e) => {
-
-        setDate(e.target.value);
-
-        setStudents([]);
-
-        setAttendance({});
-
-        setMessage("");
-
-    };
-
-
-    // =====================================================
-    // SEARCH STUDENTS
-    // =====================================================
 
     const handleSearch = async () => {
-
-        setMessage("");
-
-
-        // Validation
         if (!classId) {
-
-            showMessage("Please select Class.");
-
+            setMessage("Please select class");
+            setMessageType("warning");
             return;
-
         }
 
         if (!sectionId) {
-
-            showMessage("Please select Section.");
-
+            setMessage("Please select section");
+            setMessageType("warning");
             return;
-
-        }
-
-        if (!subjectId) {
-
-            showMessage("Please select Subject.");
-
-            return;
-
         }
 
         if (!date) {
-
-            showMessage("Please select Date.");
-
+            setMessage("Please select date");
+            setMessageType("warning");
             return;
-
         }
 
+        setLoading(true);
 
         try {
-
-            setLoading(true);
-
-            setStudents([]);
-
-            setAttendance({});
-
-
-            const requestData = {
-
+            const data = await getAttendanceStudents({
                 classId: Number(classId),
-
                 sectionId: Number(sectionId),
-
-                subjectId: Number(subjectId),
-
                 date: date
+            });
 
-            };
-
-
-            console.log(
-                "Attendance Search Request:",
-                requestData
-            );
-
-
-            const data =
-                await getAttendanceStudents(
-                    requestData
-                );
-
-
-            console.log(
-                "Attendance Students Response:",
-                data
-            );
-
-
-            const studentList =
-                Array.isArray(data)
-                    ? data
-                    : [];
-
+            const studentList = Array.isArray(data)
+                ? data
+                : data?.records || [];
 
             setStudents(studentList);
 
-
-            // =================================================
-            // LOAD EXISTING ATTENDANCE
-            // =================================================
-
             const existingAttendance = {};
 
-
             studentList.forEach((student) => {
-
-                const id =
+                const studentId =
                     student.userId ??
                     student.studentId ??
                     student.id;
 
-
-                const existing =
-                    student.attendance;
-
-
                 if (
-                    id !== undefined &&
-                    existing &&
-                    existing.status
+                    student.attendance &&
+                    student.attendance.status
                 ) {
-
-                    existingAttendance[id] =
-                        existing.status;
-
+                    existingAttendance[studentId] =
+                        student.attendance.status;
                 }
-
             });
 
-
-            setAttendance(
-                existingAttendance
-            );
-
-
-            if (studentList.length === 0) {
-
-                showMessage(
-                    "No students found for this Class and Section.",
-                    "warning"
-                );
-
-            }
-
-        }
-        catch (error) {
-
-            console.error(
-                "Student Search Error:",
-                error.response?.data || error
-            );
-
-
-            const errorData =
-                error.response?.data;
-
-
-            if (
-                errorData &&
-                typeof errorData === "object"
-            ) {
-
-                showMessage(
-                    errorData.message ||
-                    errorData.title ||
-                    "Unable to load students."
-                );
-
-            }
-            else {
-
-                showMessage(
-                    errorData ||
-                    "Unable to load students."
-                );
-
-            }
-
+            setAttendance(existingAttendance);
+        } catch (error) {
+            console.error("Error loading students:", error);
 
             setStudents([]);
+            setAttendance({});
 
-        }
-        finally {
+            setMessage(
+                error?.response?.data?.message ||
+                "Failed to load students"
+            );
 
+            setMessageType("error");
+        } finally {
             setLoading(false);
-
         }
-
     };
 
+    const handleAttendanceChange = (
+        studentId,
+        status
+    ) => {
+        setAttendance((prev) => ({
+            ...prev,
+            [studentId]: status
+        }));
+    };
 
-    // =====================================================
-    // GET STUDENT ID
-    // =====================================================
+    const handleSelectAllPresent = () => {
+        const allPresent = {};
+
+        students.forEach((student) => {
+            const studentId =
+                student.userId ??
+                student.studentId ??
+                student.id;
+
+            allPresent[studentId] = "Present";
+        });
+
+        setAttendance(allPresent);
+    };
+
+    const handleSave = async () => {
+        if (!classId) {
+            setMessage("Please select class");
+            setMessageType("warning");
+            return;
+        }
+
+        if (!sectionId) {
+            setMessage("Please select section");
+            setMessageType("warning");
+            return;
+        }
+
+        if (!date) {
+            setMessage("Please select date");
+            setMessageType("warning");
+            return;
+        }
+
+        if (students.length === 0) {
+            setMessage("Please search students first");
+            setMessageType("warning");
+            return;
+        }
+
+        const selectedStudents = students.filter((student) => {
+            const studentId =
+                student.userId ??
+                student.studentId ??
+                student.id;
+
+            return attendance[studentId];
+        });
+
+        if (selectedStudents.length === 0) {
+            setMessage("Please mark attendance first");
+            setMessageType("warning");
+            return;
+        }
+
+        setSaving(true);
+
+        try {
+            const payload = {
+                classId: Number(classId),
+                sectionId: Number(sectionId),
+                date: date,
+
+                students: selectedStudents.map((student) => {
+                    const studentId =
+                        student.userId ??
+                        student.studentId ??
+                        student.id;
+
+                    return {
+                        userId: Number(studentId),
+                        status: attendance[studentId]
+                    };
+                })
+            };
+
+            await saveAttendance(payload);
+
+            setMessage(
+                "Attendance submitted successfully"
+            );
+
+            setMessageType("success");
+        } catch (error) {
+            console.error(
+                "Error saving attendance:",
+                error
+            );
+
+            setMessage(
+                error?.response?.data?.message ||
+                "Failed to submit attendance"
+            );
+
+            setMessageType("error");
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const getStudentId = (student) => {
-
         return (
             student.userId ??
             student.studentId ??
             student.id
         );
-
     };
 
-
-    // =====================================================
-    // GET STUDENT NAME
-    // =====================================================
-
     const getStudentName = (student) => {
-
         if (student.studentName) {
-
             return student.studentName;
-
-        }
-
-        if (student.userName) {
-
-            return student.userName;
-
         }
 
         if (student.name) {
-
             return student.name;
-
         }
 
         const firstName =
@@ -529,741 +313,240 @@ function Attendance() {
             student.lastName || "";
 
         return `${firstName} ${lastName}`.trim();
-
     };
-
-
-    // =====================================================
-    // ATTENDANCE CHANGE
-    //
-    // ONLY SELECTED STUDENT CHANGES
-    // =====================================================
-
-    const handleAttendanceChange = (
-        studentId,
-        status
-    ) => {
-
-        setAttendance((previous) => ({
-
-            ...previous,
-
-            [studentId]: status
-
-        }));
-
-    };
-
-
-    // =====================================================
-    // MARK ALL PRESENT
-    // =====================================================
-
-    const handleSelectAllPresent = () => {
-
-        const newAttendance = {};
-
-
-        students.forEach((student) => {
-
-            const id =
-                getStudentId(student);
-
-
-            if (id !== undefined) {
-
-                newAttendance[id] =
-                    "Present";
-
-            }
-
-        });
-
-
-        setAttendance(
-            newAttendance
-        );
-
-    };
-
-
-    // =====================================================
-    // MARK ALL ABSENT
-    // =====================================================
-
-    const handleSelectAllAbsent = () => {
-
-        const newAttendance = {};
-
-
-        students.forEach((student) => {
-
-            const id =
-                getStudentId(student);
-
-
-            if (id !== undefined) {
-
-                newAttendance[id] =
-                    "Absent";
-
-            }
-
-        });
-
-
-        setAttendance(
-            newAttendance
-        );
-
-    };
-
-
-    // =====================================================
-    // CLEAR ALL
-    // =====================================================
-
-    const handleClearAll = () => {
-
-        setAttendance({});
-
-    };
-
-
-    // =====================================================
-    // SAVE ATTENDANCE
-    // =====================================================
-
-    const handleSave = async () => {
-
-        setMessage("");
-
-
-        if (students.length === 0) {
-
-            showMessage(
-                "No students available."
-            );
-
-            return;
-
-        }
-
-
-        // =================================================
-        // CHECK SELECTED STUDENTS
-        // =================================================
-
-        const selectedStudents =
-            students.filter((student) => {
-
-                const id =
-                    getStudentId(student);
-
-                return (
-                    id !== undefined &&
-                    attendance[id]
-                );
-
-            });
-
-
-        if (selectedStudents.length === 0) {
-
-            showMessage(
-                "Please select at least 1 student attendance."
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            setSaving(true);
-
-
-            // =================================================
-            // CREATE PAYLOAD
-            // =================================================
-
-            const payload =
-                selectedStudents.map(
-                    (student) => {
-
-                        const studentId =
-                            getStudentId(student);
-
-
-                        return {
-
-                            userId:
-                                Number(studentId),
-
-                            subjectId:
-                                Number(subjectId),
-
-                            classId:
-                                Number(classId),
-
-                            sectionId:
-                                Number(sectionId),
-
-                            dated:
-                                date,
-
-                            status:
-                                attendance[studentId],
-
-                            remarks:
-                                null
-
-                        };
-
-                    }
-                );
-
-
-            console.log(
-                "SAVE ATTENDANCE PAYLOAD:",
-                payload
-            );
-
-
-            // =================================================
-            // IMPORTANT
-            // =================================================
-            // Tumhara backend agar SaveAttendanceDto
-            // expect karta hai to payload ko us DTO ke
-            // according bhejna hoga.
-            //
-            // Agar backend directly List expect karta hai:
-            // saveAttendance(payload)
-            //
-            // Agar wrapper expect karta hai:
-            // saveAttendance({
-            //   classId,
-            //   sectionId,
-            //   subjectId,
-            //   date,
-            //   students: payload
-            // })
-            // =================================================
-
-
-            await saveAttendance({
-
-                classId:
-                    Number(classId),
-
-                sectionId:
-                    Number(sectionId),
-
-                subjectId:
-                    Number(subjectId),
-
-                date:
-                    date,
-
-                students:
-                    payload
-
-            });
-
-
-            showMessage(
-                "Attendance saved successfully.",
-                "success"
-            );
-
-
-            // Reload attendance
-            await handleSearch();
-
-        }
-        catch (error) {
-
-            console.error(
-                "Save Attendance Error:",
-                error.response?.data || error
-            );
-
-
-            const errorData =
-                error.response?.data;
-
-
-            if (
-                errorData &&
-                typeof errorData === "object"
-            ) {
-
-                showMessage(
-                    errorData.message ||
-                    errorData.title ||
-                    "Unable to save attendance."
-                );
-
-            }
-            else {
-
-                showMessage(
-                    errorData ||
-                    "Unable to save attendance."
-                );
-
-            }
-
-        }
-        finally {
-
-            setSaving(false);
-
-        }
-
-    };
-
-
-    // =====================================================
-    // RENDER
-    // =====================================================
 
     return (
-
         <DashboardLayout>
+            <Box sx={{ p: 3 }}>
 
-            <div className="attendance-page">
+                <Typography
+                    variant="h4"
+                    sx={{
+                        mb: 3,
+                        fontWeight: 600
+                    }}
+                >
+                    Mark Attendance
+                </Typography>
 
+                <Paper
+                    elevation={2}
+                    sx={{
+                        p: 3,
+                        mb: 3
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns:
+                                "repeat(3, 1fr)",
+                            gap: 2
+                        }}
+                    >
 
-                {/* =================================================
-                    HEADER
-                ================================================= */}
+                        <FormControl fullWidth>
+                            <InputLabel>
+                                Class
+                            </InputLabel>
 
-                <div className="attendance-header">
+                            <Select
+                                value={classId}
+                                label="Class"
+                                onChange={
+                                    handleClassChange
+                                }
+                            >
+                                <MenuItem value="">
+                                    Select Class
+                                </MenuItem>
 
-                    <div>
+                                {classes.map((item) => (
+                                    <MenuItem
+                                        key={
+                                            item.id ??
+                                            item.classId
+                                        }
+                                        value={
+                                            item.id ??
+                                            item.classId
+                                        }
+                                    >
+                                        {item.name ??
+                                            item.className}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
-                        <h1>
-                            Attendance
-                        </h1>
+                        <FormControl fullWidth>
+                            <InputLabel>
+                                Section
+                            </InputLabel>
 
-                        <p>
-                            Mark student attendance
-                        </p>
+                            <Select
+                                value={sectionId}
+                                label="Section"
+                                onChange={
+                                    handleSectionChange
+                                }
+                                disabled={!classId}
+                            >
+                                <MenuItem value="">
+                                    Select Section
+                                </MenuItem>
 
-                    </div>
+                                {sections.map((item) => (
+                                    <MenuItem
+                                        key={
+                                            item.id ??
+                                            item.sectionId
+                                        }
+                                        value={
+                                            item.id ??
+                                            item.sectionId
+                                        }
+                                    >
+                                        {item.name ??
+                                            item.sectionName}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
-                </div>
-
-
-                {/* =================================================
-                    FILTER CARD
-                ================================================= */}
-
-                <div className="attendance-filter-card">
-
-
-                    {/* CLASS */}
-
-                    <div className="attendance-field">
-
-                        <label>
-                            Class *
-                        </label>
-
-                        <select
-                            value={classId}
-                            onChange={
-                                handleClassChange
-                            }
-                        >
-
-                            <option value="">
-                                Select Class
-                            </option>
-
-
-                            {classes.map((item) => (
-
-                                <option
-                                    key={item.id}
-                                    value={item.id}
-                                >
-
-                                    {
-                                        item.className ??
-                                        item.name ??
-                                        `Class ${item.id}`
-                                    }
-
-                                </option>
-
-                            ))}
-
-                        </select>
-
-                    </div>
-
-
-                    {/* SECTION */}
-
-                    <div className="attendance-field">
-
-                        <label>
-                            Section *
-                        </label>
-
-                        <select
-                            value={sectionId}
-                            onChange={
-                                handleSectionChange
-                            }
-                            disabled={!classId}
-                        >
-
-                            <option value="">
-                                Select Section
-                            </option>
-
-
-                            {sections.map((item) => (
-
-                                <option
-                                    key={
-                                        item.sectionId ??
-                                        item.id
-                                    }
-                                    value={
-                                        item.sectionId ??
-                                        item.id
-                                    }
-                                >
-
-                                    {
-                                        item.sectionName ??
-                                        item.name ??
-                                        `Section ${
-                                            item.sectionId ??
-                                            item.id
-                                        }`
-                                    }
-
-                                </option>
-
-                            ))}
-
-                        </select>
-
-                    </div>
-
-
-                    {/* SUBJECT */}
-
-                    <div className="attendance-field">
-
-                        <label>
-                            Subject *
-                        </label>
-
-                        <select
-                            value={subjectId}
-                            onChange={
-                                handleSubjectChange
-                            }
-                        >
-
-                            <option value="">
-                                Select Subject
-                            </option>
-
-
-                            {subjects.map((item) => (
-
-                                <option
-                                    key={item.id}
-                                    value={item.id}
-                                >
-
-                                    {
-                                        item.subjectName ??
-                                        item.name ??
-                                        `Subject ${item.id}`
-                                    }
-
-                                </option>
-
-                            ))}
-
-                        </select>
-
-                    </div>
-
-
-                    {/* DATE */}
-
-                    <div className="attendance-field">
-
-                        <label>
-                            Date *
-                        </label>
-
-                        <input
+                        <TextField
+                            fullWidth
                             type="date"
+                            label="Date"
                             value={date}
-                            onChange={
-                                handleDateChange
+                            onChange={(e) =>
+                                setDate(e.target.value)
                             }
+                            InputLabelProps={{
+                                shrink: true
+                            }}
                         />
 
-                    </div>
+                    </Box>
 
-
-                    {/* SEARCH */}
-
-                    <button
-                        type="button"
-                        className="attendance-search-btn"
-                        onClick={handleSearch}
-                        disabled={loading}
+                    <Box
+                        sx={{
+                            mt: 3,
+                            display: "flex",
+                            gap: 2
+                        }}
                     >
+                        <Button
+                            variant="contained"
+                            onClick={handleSearch}
+                            disabled={
+                                loading ||
+                                !classId ||
+                                !sectionId
+                            }
+                        >
+                            {loading
+                                ? "Loading..."
+                                : "Search Students"}
+                        </Button>
 
-                        {loading
-                            ? "Loading..."
-                            : "Search"
-                        }
-
-                    </button>
-
-                </div>
-
-
-                {/* =================================================
-                    MESSAGE
-                ================================================= */}
-
-                {message && (
-
-                    <div
-                        className={
-                            messageType === "success"
-                                ? "attendance-message success"
-                                : messageType === "warning"
-                                    ? "attendance-message warning"
-                                    : "attendance-message"
-                        }
-                    >
-
-                        {message}
-
-                    </div>
-
-                )}
-
-
-                {/* =================================================
-                    STUDENTS TABLE
-                ================================================= */}
+                        {students.length > 0 && (
+                            <Button
+                                variant="outlined"
+                                onClick={
+                                    handleSelectAllPresent
+                                }
+                            >
+                                Select All Present
+                            </Button>
+                        )}
+                    </Box>
+                </Paper>
 
                 {students.length > 0 && (
+                    <Paper elevation={2}>
 
-                    <div className="attendance-table-card">
+                        <TableContainer>
+                            <Table>
 
-
-                        {/* TABLE HEADER */}
-
-                        <div className="attendance-table-header">
-
-                            <div>
-
-                                <h2>
-                                    Student Attendance
-                                </h2>
-
-                                <span>
-                                    {students.length} Students
-                                </span>
-
-                            </div>
-
-
-                            <div className="attendance-actions">
-
-
-                                <button
-                                    type="button"
-                                    className="select-all-btn"
-                                    onClick={
-                                        handleSelectAllPresent
-                                    }
-                                >
-
-                                    Mark All Present
-
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    className="absent-all-btn"
-                                    onClick={
-                                        handleSelectAllAbsent
-                                    }
-                                >
-
-                                    Mark All Absent
-
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    className="clear-btn"
-                                    onClick={
-                                        handleClearAll
-                                    }
-                                >
-
-                                    Clear
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-
-                        {/* TABLE */}
-
-                        <div className="attendance-table-wrapper">
-
-                            <table className="attendance-table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>
                                             #
-                                        </th>
+                                        </TableCell>
 
-                                        <th>
+                                        <TableCell>
                                             Student ID
-                                        </th>
+                                        </TableCell>
 
-                                        <th>
-                                            Roll No
-                                        </th>
-
-                                        <th>
+                                        <TableCell>
                                             Student Name
-                                        </th>
+                                        </TableCell>
 
-                                        <th>
+                                        <TableCell align="center">
                                             Attendance
-                                        </th>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
 
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
+                                <TableBody>
 
                                     {students.map(
-                                        (student, index) => {
-
+                                        (
+                                            student,
+                                            index
+                                        ) => {
                                             const studentId =
                                                 getStudentId(
                                                     student
                                                 );
-
-
-                                            const studentName =
-                                                getStudentName(
-                                                    student
-                                                );
-
-
-                                            const rollNo =
-                                                student.rollNo ??
-                                                student.rollNumber ??
-                                                "-";
-
 
                                             const currentStatus =
                                                 attendance[
                                                     studentId
                                                 ];
 
-
                                             return (
-
-                                                <tr
+                                                <TableRow
                                                     key={
-                                                        studentId ??
-                                                        index
+                                                        studentId
                                                     }
                                                 >
 
+                                                    <TableCell>
+                                                        {index +
+                                                            1}
+                                                    </TableCell>
 
-                                                    {/* NUMBER */}
+                                                    <TableCell>
+                                                        {studentId}
+                                                    </TableCell>
 
-                                                    <td>
+                                                    <TableCell>
+                                                        {getStudentName(
+                                                            student
+                                                        )}
+                                                    </TableCell>
 
-                                                        {index + 1}
+                                                    <TableCell align="center">
 
-                                                    </td>
+                                                        <Box
+                                                            sx={{
+                                                                display:
+                                                                    "flex",
+                                                                justifyContent:
+                                                                    "center",
+                                                                gap: 1
+                                                            }}
+                                                        >
 
-
-                                                    {/* STUDENT ID */}
-
-                                                    <td className="student-id">
-
-                                                        {
-                                                            studentId ??
-                                                            "-"
-                                                        }
-
-                                                    </td>
-
-
-                                                    {/* ROLL NO */}
-
-                                                    <td>
-
-                                                        {rollNo}
-
-                                                    </td>
-
-
-                                                    {/* NAME */}
-
-                                                    <td className="student-name">
-
-                                                        {
-                                                            studentName ||
-                                                            "Unknown Student"
-                                                        }
-
-                                                    </td>
-
-
-                                                    {/* ATTENDANCE */}
-
-                                                    <td>
-
-                                                        <div className="attendance-options">
-
-
-                                                            {/* PRESENT */}
-
-                                                            <button
-                                                                type="button"
-                                                                className={
-                                                                    currentStatus === "Present"
-                                                                        ? "status-btn present active"
-                                                                        : "status-btn present"
+                                                            <Button
+                                                                size="small"
+                                                                variant={
+                                                                    currentStatus ===
+                                                                    "Present"
+                                                                        ? "contained"
+                                                                        : "outlined"
                                                                 }
                                                                 onClick={() =>
                                                                     handleAttendanceChange(
@@ -1272,20 +555,16 @@ function Attendance() {
                                                                     )
                                                                 }
                                                             >
-
                                                                 Present
+                                                            </Button>
 
-                                                            </button>
-
-
-                                                            {/* ABSENT */}
-
-                                                            <button
-                                                                type="button"
-                                                                className={
-                                                                    currentStatus === "Absent"
-                                                                        ? "status-btn absent active"
-                                                                        : "status-btn absent"
+                                                            <Button
+                                                                size="small"
+                                                                variant={
+                                                                    currentStatus ===
+                                                                    "Absent"
+                                                                        ? "contained"
+                                                                        : "outlined"
                                                                 }
                                                                 onClick={() =>
                                                                     handleAttendanceChange(
@@ -1294,20 +573,16 @@ function Attendance() {
                                                                     )
                                                                 }
                                                             >
-
                                                                 Absent
+                                                            </Button>
 
-                                                            </button>
-
-
-                                                            {/* HALF DAY */}
-
-                                                            <button
-                                                                type="button"
-                                                                className={
-                                                                    currentStatus === "Half Day"
-                                                                        ? "status-btn half active"
-                                                                        : "status-btn half"
+                                                            <Button
+                                                                size="small"
+                                                                variant={
+                                                                    currentStatus ===
+                                                                    "Half Day"
+                                                                        ? "contained"
+                                                                        : "outlined"
                                                                 }
                                                                 onClick={() =>
                                                                     handleAttendanceChange(
@@ -1316,20 +591,16 @@ function Attendance() {
                                                                     )
                                                                 }
                                                             >
-
                                                                 Half Day
+                                                            </Button>
 
-                                                            </button>
-
-
-                                                            {/* LATE */}
-
-                                                            <button
-                                                                type="button"
-                                                                className={
-                                                                    currentStatus === "Late"
-                                                                        ? "status-btn late active"
-                                                                        : "status-btn late"
+                                                            <Button
+                                                                size="small"
+                                                                variant={
+                                                                    currentStatus ===
+                                                                    "Late"
+                                                                        ? "contained"
+                                                                        : "outlined"
                                                                 }
                                                                 onClick={() =>
                                                                     handleAttendanceChange(
@@ -1338,95 +609,74 @@ function Attendance() {
                                                                     )
                                                                 }
                                                             >
-
                                                                 Late
+                                                            </Button>
 
-                                                            </button>
+                                                        </Box>
 
-                                                        </div>
+                                                    </TableCell>
 
-                                                    </td>
-
-                                                </tr>
-
+                                                </TableRow>
                                             );
-
                                         }
                                     )}
 
-                                </tbody>
+                                </TableBody>
 
-                            </table>
+                            </Table>
+                        </TableContainer>
 
-                        </div>
-
-
-                        {/* =================================================
-                            SAVE
-                        ================================================= */}
-
-                        <div className="attendance-save-container">
-
-                            <button
-                                type="button"
-                                className="save-attendance-btn"
+                        <Box
+                            sx={{
+                                p: 3,
+                                display: "flex",
+                                justifyContent:
+                                    "flex-end"
+                            }}
+                        >
+                            <Button
+                                variant="contained"
+                                size="large"
                                 onClick={handleSave}
                                 disabled={saving}
                             >
-
                                 {saving
-                                    ? "Saving..."
-                                    : "Save Attendance"
-                                }
+                                    ? "Submitting..."
+                                    : "Submit Attendance"}
+                            </Button>
+                        </Box>
 
-                            </button>
-
-                        </div>
-
-                    </div>
-
+                    </Paper>
                 )}
 
+                <Snackbar
+                    open={Boolean(message)}
+                    autoHideDuration={3000}
+                    onClose={() =>
+                        setMessage("")
+                    }
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right"
+                    }}
+                >
+                    <Alert
+                        onClose={() =>
+                            setMessage("")
+                        }
+                        severity={messageType}
+                        variant="filled"
+                        sx={{
+                            width: "100%"
+                        }}
+                    >
+                        {message}
+                    </Alert>
+                </Snackbar>
 
-                {/* =================================================
-                    NO STUDENTS
-                ================================================= */}
-
-                {!loading &&
-                    students.length === 0 &&
-                    classId &&
-                    sectionId &&
-                    subjectId && (
-
-                        <div className="no-students">
-
-                            Search students to mark attendance.
-
-                        </div>
-
-                    )}
-
-
-                {/* =================================================
-                    LOADING
-                ================================================= */}
-
-                {loading && (
-
-                    <div className="loading">
-
-                        Loading students...
-
-                    </div>
-
-                )}
-
-            </div>
-
+            </Box>
         </DashboardLayout>
-
     );
-
-}
+};
 
 export default Attendance;

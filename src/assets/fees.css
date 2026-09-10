@@ -408,3 +408,285 @@
     }
 
 }
+/* =====================================================
+   FEE LIST FILTERS
+===================================================== */
+
+.fee-list-filters {
+
+    display: flex;
+
+    gap: 12px;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+}
+
+
+.fee-search {
+
+    width: 300px;
+
+    padding: 11px 14px;
+
+    border: 1px solid #d5dce5;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-size: 14px;
+
+}
+
+
+.fee-search:focus {
+
+    border-color: #1976d2;
+
+    box-shadow: 0 0 0 3px rgba(25,118,210,.1);
+
+}
+
+
+.fee-status-filter {
+
+    padding: 11px 14px;
+
+    border: 1px solid #d5dce5;
+
+    border-radius: 8px;
+
+    background: white;
+
+    outline: none;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================================
+   MONTH MULTI SELECT
+===================================================== */
+
+.month-multiselect {
+
+    height: 150px !important;
+
+    padding: 8px !important;
+
+    background: white;
+
+}
+
+
+.month-multiselect option {
+
+    padding: 8px;
+
+}
+
+
+.month-multiselect option:checked {
+
+    background: #0f3051 linear-gradient(
+        0deg,
+        #0f3051 0%,
+        #0f3051 100%
+    );
+
+    color: white;
+
+}
+
+
+.fee-field small {
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   TOTAL BOX
+===================================================== */
+
+.fee-total-box {
+
+    grid-column: 1 / -1;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px 20px;
+
+    background: #f4f7fb;
+
+    border: 1px solid #dce4ed;
+
+    border-radius: 10px;
+
+}
+
+
+.fee-total-box span {
+
+    color: #667085;
+
+    font-size: 14px;
+
+}
+
+
+.fee-total-box strong {
+
+    color: #0f3051;
+
+    font-size: 20px;
+
+    margin-right: 30px;
+
+}
+
+
+/* =====================================================
+   LIST SUMMARY
+===================================================== */
+
+.fee-list-summary {
+
+    display: flex;
+
+    gap: 20px;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #eee;
+
+}
+
+
+.fee-list-summary > div {
+
+    min-width: 180px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #f6f8fb;
+
+}
+
+
+.fee-list-summary span {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 13px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.fee-list-summary strong {
+
+    display: block;
+
+    color: #0f3051;
+
+    font-size: 20px;
+
+}
+
+
+/* =====================================================
+   NO RECORD
+===================================================== */
+
+.no-fees {
+
+    text-align: center;
+
+    padding: 35px !important;
+
+    color: #777;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .fees-table-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+
+    }
+
+
+    .fee-search {
+
+        width: 100%;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .fee-list-filters {
+
+        width: 100%;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .fee-status-filter {
+
+        width: 100%;
+
+    }
+
+
+    .fee-list-summary {
+
+        flex-direction: column;
+
+    }
+
+
+    .fee-total-box {
+
+        flex-wrap: wrap;
+
+    }
+
+}

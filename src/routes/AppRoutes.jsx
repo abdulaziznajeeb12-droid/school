@@ -3,8 +3,11 @@ import { Routes, Route } from "react-router-dom";
 // ===============================
 // AUTH
 // ===============================
-import Login from "../pages/Login";
-
+// import Login from "../pages/Login";
+import Login from "../pages/Auth/Login";
+// import ForgotPassword from "../pages/Auth/ForgotPassword";
+// import VerifyOtp from "../pages/Auth/VerifyOtp";
+// import ResetPassword from "../pages/Auth/ResetPassword";
 // ===============================
 // DASHBOARD
 // ===============================
@@ -51,6 +54,7 @@ import EditRole from "../pages/roles/EditRole";
 import UserList from "../pages/users/UserList";
 import AddUser from "../pages/users/AddUser";
 import EditUser from "../pages/users/EditUser";
+import ViewUser  from "../pages/users/ViewUser";
 
 // ===============================
 // SUBJECTS
@@ -59,6 +63,7 @@ import SubjectList from "../pages/subjects/SubjectList";
 import AddSubject from "../pages/subjects/AddSubject";
 import EditSubject from "../pages/subjects/EditSubject";
 
+import StudentReport from "../pages/reports/StudentReport";
 // ===============================
 // STUDENT CLASS
 // ===============================
@@ -77,8 +82,12 @@ import EditTeacherSubject from "../pages/teachersubject/EditTeacherSubject";
 // ATTENDANCE
 // ===============================
 import Attendance from "../pages/attendance/Attendance";
+import AttendanceList from "../pages/attendance/AttendanceList";// ===============================
+import RFIDCardAssign from "../pages/attendance/RFIDCardAssign";
 
-// ===============================
+
+import Timetable from "../pages/timetable/Timetable";
+
 // STUDENTS
 // ===============================
 import StudentList from "../pages/students/StudentList";
@@ -86,6 +95,16 @@ import AddStudent from "../pages/students/AddStudent";
 import EditStudent from "../pages/students/EditStudent";
 import StudentDetails from "../pages/students/StudentDetails";
 
+
+
+import ExamList from "../pages/Exam/ExamList";
+import ExamForm from "../pages/Exam/ExamForm";
+
+import ExamTypeList from "../pages/ExamType/ExamTypeList";
+import ExamTypeForm from "../pages/ExamType/ExamTypeForm";
+
+import MarksList from "../pages/Marks/MarksList";
+import MarksForm from "../pages/Marks/MarksForm";
 // ===============================
 // TEACHERS
 // ===============================
@@ -101,15 +120,14 @@ import ParentList from "../pages/parents/ParentList";
 // ===============================
 import FeeTypes from "../pages/fees/FeeTypes";
 import StudentFees from "../pages/fees/StudentFees";
+import FeeVouchers from "../pages/fees/FeeVouchers";
+import FeePayment from "../pages/fees/FeePayment";
 
-// ===============================
+
+import LogoutButton from "../pages/logout/Logout";// ===============================
 // OTHER
 // ===============================
-import ExamList from "../pages/exams/ExamList";
-import LibraryList from "../pages/library/LibraryList";
-import TransportList from "../pages/transport/TransportList";
-import Reports from "../pages/reports/Reports";
-import Settings from "../pages/settings/Settings";
+
 
 // ===============================
 // NOT FOUND
@@ -131,6 +149,11 @@ function AppRoutes() {
                 path="/"
                 element={<Login />}
             />
+
+            <Route
+    path="/logout"
+    element={<LogoutButton />}
+/>
 
 
             {/* ===============================
@@ -286,6 +309,10 @@ function AppRoutes() {
                 path="/users/edit/:id"
                 element={<EditUser />}
             />
+            <Route
+                path="/users/view/:id"
+                element={<ViewUser />}
+            />  
 
 
             {/* ===============================
@@ -313,7 +340,7 @@ function AppRoutes() {
             =============================== */}
 
             <Route
-                path="/student-class"
+                path="/studentclasses"
                 element={<StudentClassList />}
             />
 
@@ -346,18 +373,37 @@ function AppRoutes() {
                 path="/teachersubject/edit/:id"
                 element={<EditTeacherSubject />}
             />
+            
 
+// ===============================
+// TIMETABLE
+// ===============================
 
+<Route
+    path="/timetable"
+    element={<Timetable />}
+/>
             {/* ===============================
                 ATTENDANCE
             =============================== */}
 
-            <Route
-                path="/attendance"
-                element={<Attendance />}
-            />
+       <Route
+    path="/attendance"
+    element={<Attendance />}
+/>
 
-
+<Route
+    path="/attendance/list"
+    element={<AttendanceList />}
+/>
+<Route
+    path="/attendance/RFIDCardAssign"
+    element={<RFIDCardAssign />}
+/>
+<Route
+    path="/reports/student-report"
+    element={<StudentReport />}
+/>
             {/* ===============================
                 FEES TYPES
             =============================== */}
@@ -366,6 +412,15 @@ function AppRoutes() {
                 path="/fees/types"
                 element={<FeeTypes />}
             />
+            <Route
+    path="/fees/vouchers"
+    element={<FeeVouchers />}
+/>
+
+<Route
+    path="/fees/pay/:id"
+    element={<FeePayment />}
+/>
 
 
             {/* ===============================
@@ -377,85 +432,56 @@ function AppRoutes() {
                 element={<StudentFees />}
             />
 
+                
+            <Route
+    path="/exam"
+    element={<ExamList />}
+/>
+
+<Route
+    path="/exam/add"
+    element={<ExamForm />}
+/>
+
+<Route
+    path="/exam/edit/:id"
+    element={<ExamForm />}
+/>
+
+<Route
+    path="/examtypes"
+    element={<ExamTypeList />}
+/>
+
+<Route
+    path="/examtypes/add"
+    element={<ExamTypeForm />}
+/>
+
+<Route
+    path="/examtypes/edit/:id"
+    element={<ExamTypeForm />}
+/>
+
+<Route
+    path="/marks"
+    element={<MarksList />}
+/>
+
+<Route
+    path="/marks/add"
+    element={<MarksForm />}
+/>
+
+<Route
+    path="/marks/edit/:id"
+    element={<MarksForm />}
+/>
 
             {/* ===============================
                 TEACHERS
             =============================== */}
 
-            <Route
-                path="/teachers"
-                element={<TeacherList />}
-            />
-
-
-            {/* ===============================
-                PARENTS
-            =============================== */}
-
-            <Route
-                path="/parents"
-                element={<ParentList />}
-            />
-
-
-            {/* ===============================
-                EXAMS
-            =============================== */}
-
-            <Route
-                path="/exams"
-                element={<ExamList />}
-            />
-
-
-            {/* ===============================
-                LIBRARY
-            =============================== */}
-
-            <Route
-                path="/library"
-                element={<LibraryList />}
-            />
-
-
-            {/* ===============================
-                TRANSPORT
-            =============================== */}
-
-            <Route
-                path="/transport"
-                element={<TransportList />}
-            />
-
-
-            {/* ===============================
-                REPORTS
-            =============================== */}
-
-            <Route
-                path="/reports"
-                element={<Reports />}
-            />
-
-
-            {/* ===============================
-                SETTINGS
-            =============================== */}
-
-            <Route
-                path="/settings"
-                element={<Settings />}
-            />
-
-
-            {/* ===============================
-                NOT FOUND
-            =============================== */}
-
-            <Route
-                path="*"
-                element={<NotFound />}
-            />
 
         </Routes>
 

@@ -1,0 +1,247 @@
+.timetable-page {
+    width: 100%;
+    padding: 5px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.timetable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+
+.timetable-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+.timetable-subtitle {
+    margin: 5px 0 0;
+    color: #777;
+    font-size: 14px;
+}
+
+
+.class-filter {
+    min-width: 220px;
+}
+
+
+/* =========================================
+   CLASS CARD
+========================================= */
+
+.class-timetable-card {
+    margin-bottom: 10px;
+    overflow: hidden;
+    border-radius: 12px !important;
+}
+
+
+/* =========================================
+   CLASS HEADER
+========================================= */
+
+.class-timetable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.class-timetable-header h3 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+
+.class-timetable-header span {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: #777;
+}
+
+
+.period-count {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   TABLE SCROLL
+========================================= */
+
+.timetable-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.weekly-timetable {
+    width: 100%;
+    /* min-width: 1100px; */
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+
+.weekly-timetable th,
+.weekly-timetable td {
+    border: 1px solid #d7d7d7;
+    text-align: center;
+}
+
+
+.weekly-timetable th {
+    padding: 14px 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.weekly-timetable td {
+    min-height: 90px;
+    height: 90px;
+    padding: 7px;
+}
+
+
+/* =========================================
+   TIME COLUMN
+========================================= */
+
+.weekly-timetable .time-column {
+    width: 125px;
+}
+
+
+.time-cell {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
+.time-cell span {
+    margin: 0 3px;
+}
+
+
+/* =========================================
+   PERIOD CELL
+========================================= */
+
+.period-cell {
+    vertical-align: middle;
+    background: #fff;
+}
+
+
+.period-cell.has-class {
+    padding: 6px;
+}
+
+
+/* =========================================
+   SUBJECT CARD
+========================================= */
+
+.subject-card {
+    border-radius: 8px;
+    padding: 9px 7px;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+
+.subject-name {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.teacher-name {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+.section-name {
+    font-size: 11px;
+}
+
+
+.class-time {
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+
+/* =========================================
+   FREE PERIOD
+========================================= */
+
+.free-period {
+    font-size: 12px;
+    color: #aaa;
+    font-style: italic;
+}
+
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.empty-timetable {
+    padding: 50px;
+    text-align: center;
+    border-radius: 12px !important;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .timetable-title {
+        font-size: 23px;
+    }
+
+    .timetable-header {
+        align-items: flex-start;
+    }
+
+    .class-filter {
+        width: 100%;
+    }
+
+    .class-timetable-header {
+        padding: 15px;
+    }
+
+}

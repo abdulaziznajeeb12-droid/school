@@ -13,36 +13,32 @@ import TableRow from "@mui/material/TableRow";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 
-import { getClasses } from "../../services/classService";
-
 import {
-    getSections,
-    deleteSection,
-    searchSection
-} from "../../services/sectionService";
+    getExamTypes,
+    deleteExamType
+} from "../../services/examService";
 
-function SectionList() {
+function ExamTypeList() {
 
-    const [sections, setSections] = useState([]);
-    const [classes, setClasses] = useState([]);
+    const [examTypes, setExamTypes] = useState([]);
     const [search, setSearch] = useState("");
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     useEffect(() => {
-        loadData();
+        loadExamTypes();
     }, []);
 
-    const loadData = async () => {
+    const loadExamTypes = async () => {
 
         try {
 
-            const sectionData = await getSections();
-            const classData = await getClasses();
+            const data = await getExamTypes();
 
-            setSections(sectionData);
-            setClasses(classData);
+            setExamTypes(
+                Array.isArray(data) ? data : []
+            );
 
         } catch (error) {
 
@@ -52,51 +48,52 @@ function SectionList() {
 
     };
 
-    const handleSearch = async () => {
+    const filteredExamTypes = examTypes.filter((item) => {
 
-        try {
+        const value = search.toLowerCase();
 
-            const data = await searchSection(search);
+        return (
+            String(item.examTypeId || "")
+                .toLowerCase()
+                .includes(value) ||
 
-            setSections(data);
+            String(item.examName || "")
+                .toLowerCase()
+                .includes(value) ||
 
-        } catch (error) {
+            String(item.weightAge ?? "")
+                .toLowerCase()
+                .includes(value)
+        );
 
-            console.log(error);
-
-        }
-
-    };
+    });
 
     useEffect(() => {
-
-        const delay = setTimeout(() => {
-
-            if (search.trim() === "") {
-
-                loadData();
-
-                return;
-
-            }
-
-            handleSearch();
-
-        }, 300);
-
-        return () => clearTimeout(delay);
+        setPage(0);
     }, [search]);
+
     const handleDelete = async (id) => {
-        if (!window.confirm("Delete this Section?"))
+
+        if (!window.confirm("Delete this Exam Type?"))
             return;
+
         try {
-            await deleteSection(id);
-            loadData();
+
+            await deleteExamType(id);
+
+            loadExamTypes();
+
         } catch (error) {
+
             console.log(error);
-            alert("Delete Failed");
+
+            alert(
+                error.response?.data?.message ||
+                "Delete Failed"
+            );
 
         }
+
     };
 
     const handleChangePage = (event, newPage) => {
@@ -107,7 +104,9 @@ function SectionList() {
 
     const handleChangeRowsPerPage = (event) => {
 
-        setRowsPerPage(parseInt(event.target.value, 10));
+        setRowsPerPage(
+            parseInt(event.target.value, 10)
+        );
 
         setPage(0);
 
@@ -120,9 +119,7 @@ function SectionList() {
             <div className="page-header">
 
                 <h2 className="main-heading">
-
-                    Section Management
-
+                    Exam Type Management
                 </h2>
 
                 <div className="toolbar">
@@ -130,17 +127,17 @@ function SectionList() {
                     <input
                         className="searchbox"
                         type="text"
-                        placeholder="Search Section..."
+                        placeholder="Search Exam Type..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) =>
+                            setSearch(e.target.value)
+                        }
                     />
 
-                    <Link to="/sections/add">
+                    <Link to="/examtypes/add">
 
                         <button className="add-btn">
-
-                            + Add Section
-
+                            + Add Exam Type
                         </button>
 
                     </Link>
@@ -161,24 +158,20 @@ function SectionList() {
 
                         <TableRow className="table-header">
 
-                            <TableCell>ID</TableCell>
+                            <TableCell>
+                                ID
+                            </TableCell>
 
-                            <TableCell>Class Name</TableCell>
+                            <TableCell>
+                                Exam Name
+                            </TableCell>
 
-                            <TableCell>Section</TableCell>
-
-                            <TableCell>Teacher ID</TableCell>
-
-                            <TableCell>Room No</TableCell>
-
-                            <TableCell>Capacity</TableCell>
-
-                            <TableCell>Assign Student</TableCell>
+                            <TableCell>
+                                Weightage
+                            </TableCell>
 
                             <TableCell align="center">
-
                                 Actions
-
                             </TableCell>
 
                         </TableRow>
@@ -188,85 +181,53 @@ function SectionList() {
                     <TableBody>
 
                         {(rowsPerPage > 0
-                            ? sections.slice(
+                            ? filteredExamTypes.slice(
                                 page * rowsPerPage,
                                 page * rowsPerPage + rowsPerPage
                             )
-                            : sections
+                            : filteredExamTypes
                         ).map((item) => (
 
                             <TableRow
-                                key={item.sectionId}
+                                key={item.examTypeId}
                                 hover
                                 className="table-body-row"
                             >
 
                                 <TableCell>
-
-                                    {item.sectionId}
-
+                                    {item.examTypeId}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {classes.find(
-                                        x => x.id === item.classId
-                                    )?.className || "N/A"}
-
+                                    {item.examName}
                                 </TableCell>
 
                                 <TableCell>
-
-                                    {item.sectionName}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.sectionTeacherId}
-                                        <span> </span>
-                                    {item.teacherlastname}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.roomNo}
-
-                                </TableCell>
-
-                                <TableCell>
-
-                                    {item.capacity}
-
-                                </TableCell>
-
-                                <TableCell>
-                                    {item.countStudent}
+                                    {item.weightAge ?? "-"}%
                                 </TableCell>
 
                                 <TableCell align="center">
 
                                     <Link
-                                        to={`/sections/edit/${item.sectionId}`}
+                                        to={`/examtypes/edit/${item.examTypeId}`}
                                     >
 
                                         <button className="edit-btn">
-
                                             Edit
-
                                         </button>
 
                                     </Link>
 
-                                    {/* <button
+                                    <button
                                         className="delete-btn"
-                                        onClick={() => handleDelete(item.sectionId)}
+                                        onClick={() =>
+                                            handleDelete(
+                                                item.examTypeId
+                                            )
+                                        }
                                     >
-
                                         Delete
-
-                                    </button> */}
+                                    </button>
 
                                 </TableCell>
 
@@ -282,11 +243,13 @@ function SectionList() {
 
                             <TablePagination
                                 rowsPerPageOptions={[5, 10, 25]}
-                                count={sections.length}
+                                count={filteredExamTypes.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                onRowsPerPageChange={
+                                    handleChangeRowsPerPage
+                                }
                             />
 
                         </TableRow>
@@ -303,4 +266,4 @@ function SectionList() {
 
 }
 
-export default SectionList;
+export default ExamTypeList;

@@ -14,20 +14,23 @@ import {
     TableFooter,
     TablePagination,
     Snackbar,
-    Alert
+    Alert,
+    TextField,
+    Box
 } from "@mui/material";
 
 import {
     getTeacherSubjects,
-    deleteTeacherSubjects
+    deleteTeacherSubject
 } from "../../services/teacherSubjectService";
 
 import "../../assets/dashboard.css";
 
-
 function TeacherSubjectList() {
 
     const [data, setData] = useState([]);
+
+    const [search, setSearch] = useState("");
 
     const [page, setPage] = useState(0);
 
@@ -35,6 +38,14 @@ function TeacherSubjectList() {
 
     const [open, setOpen] = useState(false);
 
+    const [errorOpen, setErrorOpen] = useState(false);
+
+    const [errorMessage, setErrorMessage] = useState("");
+
+
+    // =====================================================
+    // LOAD DATA
+    // =====================================================
 
     useEffect(() => {
 
@@ -50,43 +61,92 @@ function TeacherSubjectList() {
             const result =
                 await getTeacherSubjects();
 
-            setData(result);
+            setData(
+                Array.isArray(result)
+                    ? result
+                    : result?.data || []
+            );
 
         }
         catch (error) {
 
             console.log(error);
 
+            setErrorMessage(
+                error.response?.data?.message ||
+                "Unable to load teacher subjects."
+            );
+
+            setErrorOpen(true);
+
         }
 
     };
 
 
-    const handleDelete = async (
-        teacherId,
-        classId,
-        sectionId
-    ) => {
+    // =====================================================
+    // SEARCH
+    // =====================================================
+
+    const filteredData = data.filter((item) => {
+
+        const keyword =
+            search.toLowerCase().trim();
+
+        if (!keyword) {
+            return true;
+        }
+
+        return [
+
+            item.teacherName,
+
+            item.className,
+
+            item.sectionName,
+
+            item.subjectName,
+
+            item.startTime,
+
+            item.endTime,
+
+            item.teacherId,
+
+            item.classId,
+
+            item.sectionId,
+
+            item.subjectId,
+
+            item.teacherSubjectId
+
+        ].some(value =>
+            String(value ?? "")
+                .toLowerCase()
+                .includes(keyword)
+        );
+
+    });
+
+
+    // =====================================================
+    // DELETE
+    // =====================================================
+
+    const handleDelete = async (id) => {
 
         if (
             !window.confirm(
                 "Delete this teacher subject assignment?"
             )
         ) {
-
             return;
-
         }
-
 
         try {
 
-            await deleteTeacherSubjects(
-                teacherId,
-                classId,
-                sectionId
-            );
-
+            await deleteTeacherSubject(id);
 
             setOpen(true);
 
@@ -97,43 +157,74 @@ function TeacherSubjectList() {
 
             console.log(error);
 
+            setErrorMessage(
+                error.response?.data?.message ||
+                error.response?.data ||
+                "Unable to delete assignment."
+            );
+
+            setErrorOpen(true);
+
         }
 
     };
 
 
-    const handlePageChange = (
-        event,
-        newPage
-    ) => {
+    // =====================================================
+    // PAGINATION
+    // =====================================================
 
-        setPage(newPage);
+    const handlePageChange =
+        (event, newPage) => {
 
-    };
+            setPage(newPage);
+
+        };
 
 
-    const handleRowsPerPageChange = (e) => {
+    const handleRowsPerPageChange =
+        (e) => {
 
-        setRowsPerPage(
-            parseInt(e.target.value, 10)
-        );
+            setRowsPerPage(
+                parseInt(
+                    e.target.value,
+                    10
+                )
+            );
 
-        setPage(0);
+            setPage(0);
 
-    };
+        };
 
 
     const rows =
         rowsPerPage > 0
-
-            ? data.slice(
+            ? filteredData.slice(
                 page * rowsPerPage,
                 page * rowsPerPage +
                 rowsPerPage
             )
+            : filteredData;
 
-            : data;
 
+    // =====================================================
+    // TIME FORMAT
+    // =====================================================
+
+    const formatTime = (time) => {
+
+        if (!time) {
+            return "-";
+        }
+
+        return String(time).substring(0, 5);
+
+    };
+
+
+    // =====================================================
+    // UI
+    // =====================================================
 
     return (
 
@@ -145,13 +236,16 @@ function TeacherSubjectList() {
                     Teacher Subject Management
                 </h2>
 
-
                 <div className="toolbar">
 
-                    <Link to="/teachersubject/add">
+                    <Link
+                        to="/teachersubject/add"
+                    >
 
-                        <button className="add-btn">
-                            + Assign Subjects
+                        <button
+                            className="add-btn"
+                        >
+                            + Assign Subject
                         </button>
 
                     </Link>
@@ -161,20 +255,73 @@ function TeacherSubjectList() {
             </div>
 
 
+            {/* =================================================
+                SEARCH
+            ================================================= */}
+
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginBottom: "20px"
+                }}
+            >
+
+                <TextField
+
+                    label="Search Teacher / Subject / Class / Section / Time"
+
+                    value={search}
+
+                    onChange={(e) => {
+
+                        setSearch(
+                            e.target.value
+                        );
+
+                        setPage(0);
+
+                    }}
+
+                    size="small"
+
+                    sx={{
+                        width: {
+                            xs: "100%",
+                            sm: "450px"
+                        }
+                    }}
+
+                />
+
+            </Box>
+
+
+            {/* =================================================
+                TABLE
+            ================================================= */}
+
             <TableContainer
                 component={Paper}
                 className="school-table-container"
                 elevation={5}
             >
 
-                <Table className="school-table">
+                <Table
+                    className="school-table"
+                >
 
                     <TableHead>
 
-                        <TableRow className="table-header">
+                        <TableRow
+                            className="table-header"
+                        >
 
                             <TableCell>
                                 ID
+                            </TableCell>
+                            <TableCell>
+                                Day
                             </TableCell>
 
                             <TableCell>
@@ -190,10 +337,20 @@ function TeacherSubjectList() {
                             </TableCell>
 
                             <TableCell>
-                                Subjects
+                                Subject
                             </TableCell>
 
-                            <TableCell align="center">
+                            <TableCell>
+                                Start Time
+                            </TableCell>
+
+                            <TableCell>
+                                End Time
+                            </TableCell>
+
+                            <TableCell
+                                align="center"
+                            >
                                 Actions
                             </TableCell>
 
@@ -204,94 +361,150 @@ function TeacherSubjectList() {
 
                     <TableBody>
 
-                        {rows.map((item, index) => (
+                        {rows.length > 0 ? (
 
-                            <TableRow
-                                key={
-                                    `${item.teacherId}-${item.classId}-${item.sectionId}`
-                                }
-                                hover
-                                className="table-body-row"
-                            >
+                            rows.map((item) => (
+                                
+                                <TableRow
+                                    key={
+                                        item.teacherSubjectId
+                                    }
+                                    hover
+                                    className="table-body-row"
+                                >
+                                    
 
-                            <TableCell>
-                                {item.teacherId}
-                            </TableCell>
-                                <TableCell>
-                                    {item.teacherName}
-                                </TableCell>
+                                    {/* ID */}
+
+                                    <TableCell>
+                                        {
+                                            item.teacherSubjectId
+                                        }
+                                    </TableCell>
+<TableCell>
+                                        {
+                                            item.dayOfWeek
+                                        }
+                                    </TableCell>
+
+                                    {/* TEACHER */}
+
+                                    <TableCell>
+                                        {
+                                            item.teacherName
+                                        }
+                                    </TableCell>
 
 
-                                <TableCell>
-                                    {item.className}
-                                </TableCell>
+                                    {/* CLASS */}
+
+                                    <TableCell>
+                                        {
+                                            item.className
+                                        }
+                                    </TableCell>
 
 
-                                <TableCell>
-                                    {item.sectionName}
-                                </TableCell>
+                                    {/* SECTION */}
+
+                                    <TableCell>
+                                        {
+                                            item.sectionName
+                                        }
+                                    </TableCell>
 
 
-                                <TableCell>
+                                    {/* SUBJECT */}
 
-                                    <div className="subject-chips">
+                                    <TableCell>
+                                        {
+                                            item.subjectName
+                                        }
+                                    </TableCell>
 
-                                        {item.subjects?.map(
-                                            subject => (
 
-                                                <span
-                                                    key={
-                                                        subject.subjectId
-                                                    }
-                                                    className="subject-chip"
-                                                >
-                                                    {
-                                                        subject.subjectName
-                                                    }
-                                                </span>
+                                    {/* START TIME */}
 
-                                            )
+                                    <TableCell>
+
+                                        {formatTime(
+                                            item.startTime
                                         )}
 
-                                    </div>
-
-                                </TableCell>
+                                    </TableCell>
 
 
-                                <TableCell align="center">
+                                    {/* END TIME */}
 
-                                    <Link
-                                        to={`/teachersubject/edit/${item.teacherId}`}
+                                    <TableCell>
+
+                                        {formatTime(
+                                            item.endTime
+                                        )}
+
+                                    </TableCell>
+
+
+                                    {/* ACTIONS */}
+
+                                    <TableCell
+                                        align="center"
                                     >
 
-                                        <button className="edit-btn">
-                                            Edit
+                                        <Link
+                                            to={`/teachersubject/edit/${item.teacherSubjectId}`}
+                                        >
+
+                                            <button
+                                                className="edit-btn"
+                                            >
+                                                Edit
+                                            </button>
+
+                                        </Link>
+
+
+                                        <button
+                                            className="delete-btn"
+                                            onClick={() =>
+                                                handleDelete(
+                                                    item.teacherSubjectId
+                                                )
+                                            }
+                                        >
+                                            Delete
                                         </button>
 
-                                    </Link>
+                                    </TableCell>
 
+                                </TableRow>
 
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() =>
-                                            handleDelete(
-                                                item.teacherId,
-                                                item.classId,
-                                                item.sectionId
-                                            )
-                                        }
-                                    >
-                                        Delete
-                                    </button>
+                            ))
+
+                        ) : (
+
+                            <TableRow>
+
+                                <TableCell
+                                    colSpan={8}
+                                    align="center"
+                                >
+
+                                    No teacher subject
+                                    assignment found.
 
                                 </TableCell>
 
                             </TableRow>
 
-                        ))}
+                        )}
 
                     </TableBody>
 
+
+                    {/* =================================================
+                        FOOTER
+                    ================================================= */}
 
                     <TableFooter>
 
@@ -305,7 +518,9 @@ function TeacherSubjectList() {
                                     25
                                 ]}
 
-                                count={data.length}
+                                count={
+                                    filteredData.length
+                                }
 
                                 rowsPerPage={
                                     rowsPerPage
@@ -332,21 +547,20 @@ function TeacherSubjectList() {
             </TableContainer>
 
 
+            {/* =====================================================
+                SUCCESS
+            ===================================================== */}
+
             <Snackbar
-
                 open={open}
-
                 autoHideDuration={3000}
-
                 onClose={() =>
                     setOpen(false)
                 }
-
                 anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right"
                 }}
-
             >
 
                 <Alert
@@ -354,6 +568,35 @@ function TeacherSubjectList() {
                     variant="filled"
                 >
                     Assignment Deleted Successfully!
+                </Alert>
+
+            </Snackbar>
+
+
+            {/* =====================================================
+                ERROR
+            ===================================================== */}
+
+            <Snackbar
+                open={errorOpen}
+                autoHideDuration={4000}
+                onClose={() =>
+                    setErrorOpen(false)
+                }
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right"
+                }}
+            >
+
+                <Alert
+                    severity="error"
+                    variant="filled"
+                    onClose={() =>
+                        setErrorOpen(false)
+                    }
+                >
+                    {errorMessage}
                 </Alert>
 
             </Snackbar>

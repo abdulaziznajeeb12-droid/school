@@ -460,4 +460,4 @@ function FeeTypes() {
     );
 }
 
-export default FeeTypes;
+export default FeeTypes;        
